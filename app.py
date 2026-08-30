@@ -3034,34 +3034,91 @@ def create_order():
         })
 
         # =================================================
-        # 12. SEND EMAIL
+        # 12. SEND EMAIL + WHATSAPP
+        # (run in a background thread so a slow/blocked SMTP
+        #  connection can never hang or crash this request.
+        #  Render's free tier blocks outbound SMTP ports,
+        #  which used to make this request hang for 30s and
+        #  get killed by the worker timeout.)
         # =================================================
 
-        send_order_confirmation_email(
-            customer_name=customer_name,
-            customer_email=email,
-            order_number=order_number,
-            items=clean_items,
-            subtotal=subtotal,
-            discount=discount,
-            delivery_fee=delivery_fee,
-            total=total,
-            address=address,
-            city=city,
-            payment_method=payment_method
-        )
+        def _send_notifications_async(
+            customer_name,
+            customer_email,
+            phone,
+            order_number,
+            clean_items,
+            subtotal,
+            discount,
+            delivery_fee,
+            total,
+            address,
+            city,
+            payment_method
+        ):
 
-        # =================================================
-        # 12b. SEND WHATSAPP CONFIRMATION
-        # =================================================
+            with app.app_context():
 
-        send_whatsapp_order_confirmation(
-            customer_name=customer_name,
-            phone=phone,
-            order_number=order_number,
-            total=total,
-            payment_method=payment_method
-        )
+                try:
+
+                    send_order_confirmation_email(
+                        customer_name=customer_name,
+                        customer_email=customer_email,
+                        order_number=order_number,
+                        items=clean_items,
+                        subtotal=subtotal,
+                        discount=discount,
+                        delivery_fee=delivery_fee,
+                        total=total,
+                        address=address,
+                        city=city,
+                        payment_method=payment_method
+                    )
+
+                except Exception as email_error:
+
+                    print(
+                        "BACKGROUND EMAIL ERROR:",
+                        str(email_error),
+                        flush=True
+                    )
+
+                try:
+
+                    send_whatsapp_order_confirmation(
+                        customer_name=customer_name,
+                        phone=phone,
+                        order_number=order_number,
+                        total=total,
+                        payment_method=payment_method
+                    )
+
+                except Exception as whatsapp_error:
+
+                    print(
+                        "BACKGROUND WHATSAPP ERROR:",
+                        str(whatsapp_error),
+                        flush=True
+                    )
+
+        threading.Thread(
+            target=_send_notifications_async,
+            args=(
+                customer_name,
+                email,
+                phone,
+                order_number,
+                clean_items,
+                subtotal,
+                discount,
+                delivery_fee,
+                total,
+                address,
+                city,
+                payment_method
+            ),
+            daemon=True
+        ).start()
 
         # =================================================
         # 13. SUCCESS
