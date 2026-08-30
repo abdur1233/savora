@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Savora Admin - Orders</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f6f3;
+            color: #222;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 255px;
+            background: #171717;
+            color: white;
+            padding: 25px 15px;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 35px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: #ff6500;
+            border-radius: 14px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 23px;
+        }
+
+        .brand h2 {
+            font-family: Georgia, serif;
+            font-size: 27px;
+        }
+
+        .brand small {
+            color: #aaa;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav a {
+            color: #aaa;
+            text-decoration: none;
+
+            padding: 16px 14px;
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            font-size: 16px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: #3b2116;
+            color: white;
+        }
+
+        .bottom-link {
+            margin-top: auto;
+        }
+
+        /* MAIN */
+
+        .main {
+            flex: 1;
+            padding: 35px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-family: Georgia, serif;
+            font-size: 42px;
+        }
+
+        .topbar p {
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .admin {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-avatar {
+            width: 48px;
+            height: 48px;
+
+            border-radius: 50%;
+            background: #fff0e8;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #ed6200;
+            font-weight: bold;
+        }
+
+        /* ORDERS CARD */
+
+        .orders-card {
+            background: white;
+            border: 1px solid #e9e6e1;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .orders-header {
+            padding: 25px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .orders-header h2 {
+            font-family: Georgia, serif;
+            font-size: 27px;
+        }
+
+        .orders-header span {
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* TABLE */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            background: #faf9f7;
+
+            padding: 17px 20px;
+
+            color: #777;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        td {
+            padding: 19px 20px;
+            border-top: 1px solid #eee;
+
+            font-size: 14px;
+        }
+
+        tr.order-row {
+            cursor: pointer;
+        }
+
+        tr.order-row:hover {
+            background: #fffaf6;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #ed6200;
+        }
+
+        .customer-name {
+            font-weight: 600;
+        }
+
+        .customer-phone {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .status {
+            display: inline-block;
+
+            padding: 7px 12px;
+            border-radius: 30px;
+
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status.pending {
+            background: #fff4d6;
+            color: #a46a00;
+        }
+
+        .status.preparing {
+            background: #e7efff;
+            color: #4169b5;
+        }
+
+        .status.delivered {
+            background: #e4f7ed;
+            color: #168653;
+        }
+
+        .status.cancelled {
+            background: #ffe5e5;
+            color: #c53030;
+        }
+
+        .empty {
+            padding: 70px 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        .empty i {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        /* MODAL */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+
+            background: rgba(0, 0, 0, .55);
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 850px;
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            background: white;
+            border-radius: 22px;
+
+            padding: 30px;
+        }
+
+        .modal-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            margin-bottom: 25px;
+        }
+
+        .modal-top h2 {
+            font-family: Georgia, serif;
+            font-size: 30px;
+        }
+
+        .close {
+            border: none;
+            background: #f3f3f3;
+
+            width: 40px;
+            height: 40px;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* INFO */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+        .info-box {
+            background: #f8f7f5;
+            padding: 17px;
+            border-radius: 12px;
+        }
+
+        .info-box label {
+            display: block;
+
+            font-size: 12px;
+            color: #999;
+
+            margin-bottom: 6px;
+        }
+
+        .info-box strong {
+            font-size: 14px;
+        }
+
+        /* ITEMS */
+
+        .section-title {
+            font-family: Georgia, serif;
+            font-size: 21px;
+            margin-bottom: 12px;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 14px;
+
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-name {
+            font-weight: 600;
+        }
+
+        .item-meta {
+            color: #888;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .totals {
+            margin-top: 20px;
+            padding-top: 15px;
+
+            border-top: 1px solid #ddd;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+
+            padding: 7px 0;
+        }
+
+        .grand-total {
+            font-size: 20px;
+            font-weight: bold;
+
+            margin-top: 8px;
+        }
+
+        /* STATUS CONTROL */
+
+        .status-control {
+            margin-top: 25px;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-control select {
+            padding: 12px 15px;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            font-size: 14px;
+        }
+
+        .save-status {
+            border: none;
+
+            background: #ed6200;
+            color: white;
+
+            padding: 12px 20px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .save-status:hover {
+            background: #d95600;
+        }
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                width: 75px;
+            }
+
+            .brand h2,
+            .brand small,
+            .nav a span {
+                display: none;
+            }
+
+            .main {
+                padding: 25px 15px;
+            }
+
+            .topbar h1 {
+                font-size: 32px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <i class="fa-solid fa-utensils"></i>
+            </div>
+
+            <div>
+                <h2>Savora</h2>
+                <small>Admin Panel</small>
+            </div>
+
+        </div>
+
+
+        <nav class="nav">
+
+            <a href="/admin">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/admin/orders" class="active">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span>Orders</span>
+            </a>
+
+            <a href="/admin/products">
+                <i class="fa-solid fa-utensils"></i>
+                <span>Products</span>
+            </a>
+
+        </nav>
+
+
+        <a
+            href="/"
+            class="nav bottom-link"
+            target="_blank"
+        >
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>View Website</span>
+        </a>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+                <h1>Orders</h1>
+                <p>Manage customer orders and deliveries.</p>
+            </div>
+
+            <div class="admin">
+
+                <div class="admin-avatar">
+                    A
+                </div>
+
+                <div>
+                    <strong>Administrator</strong>
+                    <p>Online</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <section class="orders-card">
+
+            <div class="orders-header">
+
+                <div>
+                    <h2>All Orders</h2>
+                    <span id="orderCount">
+                        Loading orders...
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                            <th>Date</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="ordersTable">
+
+                        <tr>
+
+                            <td colspan="6">
+
+                                <div class="empty">
+                                    <i class="fa-solid fa-spinner fa-spin"></i>
+                                    <p>Loading orders...</p>
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ORDER DETAIL MODAL -->
+
+<div
+    class="modal"
+    id="orderModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-top">
+
+            <div>
+
+                <small>ORDER DETAILS</small>
+
+                <h2 id="modalOrderId">
+                    Order
+                </h2>
+
+            </div>
+
+            <button
+                class="close"
+                id="closeModal"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <!-- CUSTOMER INFORMATION -->
+
+        <h3 class="section-title">
+            Customer Information
+        </h3>
+
+        <div class="info-grid">
+
+            <div class="info-box">
+
+                <label>Name</label>
+
+                <strong id="customerName">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <label>Phone</label>
+
+                <strong id="customerPhone">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <label>Email</label>
+
+                <strong id="customerEmail">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <label>Payment</label>
+
+                <strong id="customerPayment">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <label>Delivery Address</label>
+
+                <strong id="customerAddress">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <label>Delivery Instructions</label>
+
+                <strong id="customerInstructions">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ITEMS -->
+
+        <h3 class="section-title">
+            Ordered Items
+        </h3>
+
+        <div id="orderItems">
+
+        </div>
+
+
+        <!-- TOTALS -->
+
+        <div class="totals">
+
+            <div class="total-row">
+
+                <span>Subtotal</span>
+
+                <strong id="modalSubtotal">
+                    Rs. 0
+                </strong>
+
+            </div>
+
+
+            <div class="total-row">
+
+                <span>Discount</span>
+
+                <strong id="modalDiscount">
+                    Rs. 0
+                </strong>
+
+            </div>
+
+
+            <div class="total-row">
+
+                <span>Delivery Fee</span>
+
+                <strong id="modalDelivery">
+                    Rs. 0
+                </strong>
+
+            </div>
+
+
+            <div class="total-row grand-total">
+
+                <span>Total</span>
+
+                <strong id="modalTotal">
+                    Rs. 0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="status-control">
+
+            <select id="orderStatus">
+
+                <option value="Pending">
+                    Pending
+                </option>
+
+                <option value="Preparing">
+                    Preparing
+                </option>
+
+                <option value="Delivered">
+                    Delivered
+                </option>
+
+                <option value="Cancelled">
+                    Cancelled
+                </option>
+
+            </select>
+
+
+            <button
+                class="save-status"
+                id="saveStatus"
+            >
+                Update Status
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let currentOrderId = null;
+
+
+/* =========================================
+   LOAD ORDERS
+========================================= */
+
+async function loadOrders() {
+
+    const table = document.getElementById(
+        "ordersTable"
+    );
+
+    try {
+
+        const response = await fetch(
+            "/api/admin/orders"
+        );
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(
+                "Unable to load orders"
+            );
+        }
+
+        const orders = result.orders;
+
+        document.getElementById(
+            "orderCount"
+        ).textContent =
+            `${orders.length} order(s) found`;
+
+
+        if (orders.length === 0) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td colspan="6">
+
+                        <div class="empty">
+
+                            <i class="fa-solid fa-bag-shopping"></i>
+
+                            <p>No orders yet.</p>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+        }
+
+
+        table.innerHTML = "";
+
+
+        orders.forEach(order => {
+
+            const row =
+                document.createElement("tr");
+
+            row.className = "order-row";
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    <span class="order-id">
+                        ${escapeHTML(order.order_id)}
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <div class="customer-name">
+                        ${escapeHTML(order.customer_name)}
+                    </div>
+
+                    <div class="customer-phone">
+                        ${escapeHTML(order.customer_phone)}
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <strong>
+                        Rs. ${Number(
+                            order.total
+                        ).toLocaleString()}
+                    </strong>
+
+                </td>
+
+
+                <td>
+                    ${escapeHTML(order.payment)}
+                </td>
+
+
+                <td>
+
+                    <span class="
+                        status
+                        ${getStatusClass(order.status)}
+                    ">
+
+                        ${escapeHTML(order.status)}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+                    ${formatDate(order.created_at)}
+                </td>
+
+            `;
+
+
+            row.addEventListener(
+                "click",
+                () => openOrder(order.order_id)
+            );
+
+
+            table.appendChild(row);
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td colspan="6">
+
+                    <div class="empty">
+
+                        <p>
+                            Failed to load orders.
+                        </p>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   OPEN ORDER
+========================================= */
+
+async function openOrder(orderId) {
+
+    try {
+
+        const response = await fetch(
+            `/api/admin/orders/${encodeURIComponent(orderId)}`
+        );
+
+        const result = await response.json();
+
+        if (!result.success) {
+            alert("Order not found.");
+            return;
+        }
+
+        const order = result.order;
+
+        currentOrderId = order.order_id;
+
+
+        document.getElementById(
+            "modalOrderId"
+        ).textContent = order.order_id;
+
+
+        document.getElementById(
+            "customerName"
+        ).textContent =
+            order.customer_name;
+
+
+        document.getElementById(
+            "customerPhone"
+        ).textContent =
+            order.customer_phone;
+
+
+        document.getElementById(
+            "customerEmail"
+        ).textContent =
+            order.customer_email;
+
+
+        document.getElementById(
+            "customerPayment"
+        ).textContent =
+            order.payment;
+
+
+        document.getElementById(
+            "customerAddress"
+        ).textContent =
+            `${order.address}, ${order.city}`;
+
+
+        document.getElementById(
+            "customerInstructions"
+        ).textContent =
+            order.instructions || "None";
+
+
+        document.getElementById(
+            "modalSubtotal"
+        ).textContent =
+            `Rs. ${Number(
+                order.subtotal
+            ).toLocaleString()}`;
+
+
+        document.getElementById(
+            "modalDiscount"
+        ).textContent =
+            `- Rs. ${Number(
+                order.discount
+            ).toLocaleString()}`;
+
+
+        document.getElementById(
+            "modalDelivery"
+        ).textContent =
+            Number(order.delivery_fee) === 0
+                ? "FREE"
+                : `Rs. ${Number(
+                    order.delivery_fee
+                ).toLocaleString()}`;
+
+
+        document.getElementById(
+            "modalTotal"
+        ).textContent =
+            `Rs. ${Number(
+                order.total
+            ).toLocaleString()}`;
+
+
+        /* ITEMS */
+
+        const itemsContainer =
+            document.getElementById(
+                "orderItems"
+            );
+
+        itemsContainer.innerHTML = "";
+
+
+        order.items.forEach(item => {
+
+            const div =
+                document.createElement("div");
+
+            div.className = "item";
+
+
+            div.innerHTML = `
+
+                <div>
+
+                    <div class="item-name">
+                        ${escapeHTML(
+                            item.product_name
+                        )}
+                    </div>
+
+                    <div class="item-meta">
+
+                        ${item.quantity} ×
+                        Rs. ${Number(
+                            item.price
+                        ).toLocaleString()}
+
+                    </div>
+
+                </div>
+
+
+                <strong>
+
+                    Rs. ${(
+                        Number(item.price) *
+                        Number(item.quantity)
+                    ).toLocaleString()}
+
+                </strong>
+
+            `;
+
+
+            itemsContainer.appendChild(div);
+
+        });
+
+
+        document.getElementById(
+            "orderStatus"
+        ).value =
+            order.status;
+
+
+        document.getElementById(
+            "orderModal"
+        ).classList.add("show");
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to load order details."
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   UPDATE STATUS
+========================================= */
+
+document.getElementById(
+    "saveStatus"
+).addEventListener(
+    "click",
+    async () => {
+
+        if (!currentOrderId) {
+            return;
+        }
+
+        const status =
+            document.getElementById(
+                "orderStatus"
+            ).value;
+
+
+        try {
+
+            const response = await fetch(
+
+                `/api/admin/orders/${encodeURIComponent(
+                    currentOrderId
+                )}/status`,
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        status: status
+                    })
+
+                }
+
+            );
+
+
+            const result =
+                await response.json();
+
+
+            if (!result.success) {
+
+                alert(
+                    result.message ||
+                    "Status update failed."
+                );
+
+                return;
+            }
+
+
+            alert(
+                "Order status updated successfully."
+            );
+
+
+            document.getElementById(
+                "orderModal"
+            ).classList.remove("show");
+
+
+            loadOrders();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Server error while updating status."
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   CLOSE MODAL
+========================================= */
+
+document.getElementById(
+    "closeModal"
+).addEventListener(
+    "click",
+    () => {
+
+        document.getElementById(
+            "orderModal"
+        ).classList.remove("show");
+
+    }
+);
+
+
+document.getElementById(
+    "orderModal"
+).addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target.id ===
+            "orderModal"
+        ) {
+
+            event.target.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   HELPERS
+========================================= */
+
+function getStatusClass(status) {
+
+    return String(status)
+        .toLowerCase()
+        .replace(" ", "");
+
+}
+
+
+function formatDate(date) {
+
+    if (!date) {
+        return "-";
+    }
+
+    const d = new Date(
+        date.replace(" ", "T") + "Z"
+    );
+
+    return d.toLocaleDateString(
+        "en-PK",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================
+   INITIAL LOAD
+========================================= */
+
+loadOrders();
+
+</script>
+
+</body>
+
+</html>

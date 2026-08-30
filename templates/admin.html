@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Savora | Admin Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+          rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="admin-brand">
+
+            <span class="brand-icon">
+                <i class="fa-solid fa-utensils"></i>
+            </span>
+
+            <div>
+                <strong>Savora</strong>
+                <small>Admin Panel</small>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <button class="sidebar-link active" data-section="dashboard">
+                <i class="fa-solid fa-chart-pie"></i>
+                Dashboard
+            </button>
+
+            <button class="sidebar-link" data-section="orders">
+                <i class="fa-solid fa-bag-shopping"></i>
+                Orders
+                <span class="new-order-badge" id="newOrderBadge" style="display:none;">0</span>
+            </button>
+
+            <button class="sidebar-link" data-section="products">
+                <i class="fa-solid fa-utensils"></i>
+                Products
+            </button>
+
+        </nav>
+
+
+                <div class="sidebar-bottom">
+
+            <a href="/" class="view-site">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                View Website
+            </a>
+
+            <a href="/admin/logout" class="view-site" style="margin-top:10px;color:#c0392b;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </a>
+
+        </div>
+
+            
+        
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <header class="admin-header">
+
+            <div class="header-left">
+
+            <button class="mobile-toggle" id="mobileToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+                    <span class="header-label">SAVORA ADMIN</span>
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+
+            </div>
+
+
+            <div class="live-indicator" id="liveIndicator" title="Live order updates">
+                <span class="live-indicator-dot"></span>
+                <span id="liveIndicatorLabel">Connecting…</span>
+            </div>
+
+
+            <div class="admin-user">
+
+                <div class="admin-avatar">
+                    A
+                </div>
+
+                <div>
+                    <strong>Administrator</strong>
+                    <small>Online</small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section class="admin-section active" id="dashboardSection">
+
+            <div class="welcome-box">
+
+                <div>
+                    <span>WELCOME BACK</span>
+
+                    <h2>
+                        Manage your Savora restaurant.
+                    </h2>
+
+                    <p>
+                        Monitor orders, products and revenue
+                        from one place.
+                    </p>
+                </div>
+
+                <i class="fa-solid fa-chart-line"></i>
+
+            </div>
+
+
+            <!-- STATS -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+
+                    <div>
+                        <span>Total Orders</span>
+                        <strong id="totalOrders">0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon yellow">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+
+                    <div>
+                        <span>Pending Orders</span>
+                        <strong id="pendingOrders">0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+
+                    <div>
+                        <span>Delivered</span>
+                        <strong id="deliveredOrders">0</strong>
+                    </div>
+
+                </div>
+
+
+                
+                                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+
+                    <div>
+                        <span>Total Revenue</span>
+                        <strong id="totalRevenue">Rs. 0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        <i class="fa-solid fa-calendar-day"></i>
+                    </div>
+
+                    <div>
+                        <span>Today's Sales</span>
+                        <strong id="todaySales">Rs. 0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+
+                    <div>
+                        <span>Best Seller</span>
+                        <strong id="bestSellerName">N/A</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOW STOCK ALERT -->
+
+            <div
+                class="panel low-stock-panel"
+                id="lowStockPanel"
+                style="display:none;">
+
+                <div class="panel-header">
+
+                    <div>
+                        <span class="low-stock-alert-label">
+                            <span class="low-stock-alert-icon">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </span>
+                            ALERT
+                        </span>
+                        <h2>Low Stock Products</h2>
+                    </div>
+
+                    <button
+                        class="text-btn"
+                        data-section="products">
+                        Manage Products
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                </div>
+
+                <div class="low-stock-list" id="lowStockList"></div>
+
+            </div>
+
+
+            <!-- RECENT ORDERS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <span class="panel-label">ORDERS</span>
+                        <h2>Recent Orders</h2>
+                    </div>
+
+                    <button class="text-btn" data-section="orders">
+                        View All
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="recentOrdersTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ORDERS ================= -->
+
+        <section class="admin-section" id="ordersSection">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="panel-label">MANAGEMENT</span>
+                    <h2>All Orders</h2>
+                    <p>Manage customer orders and delivery status.</p>
+                </div>
+
+                <button class="refresh-btn" id="refreshOrders">
+                    <i class="fa-solid fa-rotate"></i>
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <div class="filter-bar">
+
+                <div class="admin-search">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input
+                        type="text"
+                        id="orderSearch"
+                        placeholder="Search order or customer...">
+
+                </div>
+
+
+                <select id="statusFilter">
+
+                    <option value="all">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Preparing">Preparing</option>
+                    <option value="Out for Delivery">Out for Delivery</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="ordersTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+                          <div class="pagination" id="ordersPagination"></div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= PRODUCTS ================= -->
+
+        <section class="admin-section" id="productsSection">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="panel-label">MENU</span>
+                    <h2>Products</h2>
+                    <p>Manage your food menu.</p>
+                </div>
+
+                <button class="primary-admin-btn" id="addProductBtn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Product
+                </button>
+
+            </div>
+
+
+            
+                        <div class="products-admin-grid" id="productsGrid">
+
+            </div>
+
+            <div class="pagination" id="productsPagination"></div>
+
+        </section>
+
+    </main>
+
+    <!-- ================= ORDER DETAILS MODAL ================= -->
+
+    <div class="admin-modal-overlay" id="orderModal">
+
+        <div class="admin-modal">
+
+            <button class="modal-close" id="closeOrderModal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <span class="panel-label">ORDER DETAILS</span>
+
+            <h2 id="modalOrderNumber">
+                Order
+            </h2>
+
+            <div id="orderDetailsContent">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= PRODUCT MODAL ================= -->
+
+    <div class="admin-modal-overlay" id="productModal">
+
+        <div class="admin-modal product-modal">
+
+            <button class="modal-close" id="closeProductModal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <span class="panel-label">PRODUCT</span>
+
+            <h2 id="productModalTitle">
+                Add Product
+            </h2>
+
+
+            <form id="productForm">
+
+                <input type="hidden" id="productId">
+
+
+                <div class="form-grid">
+
+                    <div class="admin-form-group">
+
+                        <label>Product Name</label>
+
+                        <input
+                            type="text"
+                            id="productName"
+                            required
+                            placeholder="e.g. Beef Burger">
+
+                    </div>
+
+
+                    <div class="admin-form-group">
+
+                        <label>Category</label>
+
+                        <select id="productCategory" required>
+
+                            <option value="">Select Category</option>
+
+                            <option value="burger">Burger</option>
+                            <option value="pizza">Pizza</option>
+                            <option value="pasta">Pasta</option>
+                            <option value="chicken">Chicken</option>
+                            <option value="drinks">Drinks</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="admin-form-group">
+
+                        <label>Price</label>
+
+                        <input
+                            type="number"
+                            id="productPrice"
+                            step="0.01"
+                            min="0"
+                            required
+                            placeholder="12.99">
+
+                    </div>
+
+
+                    <div class="admin-form-group">
+
+                        <label>Rating</label>
+
+                        <input
+                            type="number"
+                            id="productRating"
+                            step="0.1"
+                            min="0"
+                            max="5"
+                            value="4.5">
+
+                    </div>
+
+
+                    <div class="admin-form-group">
+
+                        <label>Stock (Quantity Available)</label>
+
+                        <input
+                            type="number"
+                            id="productStock"
+                            step="1"
+                            min="0"
+                            value="50"
+                            placeholder="e.g. 50">
+
+                    </div>
+
+
+                    <div class="admin-form-group full">
+
+                        <label>Image URL</label>
+
+                        <input
+                            type="url"
+                            id="productImage"
+                            placeholder="https://...">
+
+                    </div>
+
+
+                    <div class="admin-form-group full">
+
+                        <label>Description</label>
+
+                        <textarea
+                            id="productDescription"
+                            rows="4"
+                            placeholder="Product description..."></textarea>
+
+                    </div>
+
+
+                    <div class="admin-form-group">
+
+                        <label>Delivery Time</label>
+
+                        <input
+                            type="number"
+                            id="productDelivery"
+                            value="20"
+                            min="1">
+
+                    </div>
+
+
+                    <div class="admin-form-group">
+
+                        <label>Badge</label>
+
+                        <input
+                            type="text"
+                            id="productBadge"
+                            placeholder="NEW">
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-admin-btn full-btn">
+
+                    Save Product
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,2621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+        content="Savora — premium fresh food delivered fast. Explore our menu and order your favorite meals online.">
+
+        <meta name="theme-color" content="#f25c05">
+
+    <title>Savora | Fresh Food, Fast Delivery</title>
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+
+    <!-- Open Graph / Social Sharing -->
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Savora">
+    <meta property="og:title" content="Savora | Fresh Food, Fast Delivery">
+    <meta property="og:description"
+        content="Handcrafted meals made with fresh ingredients, bold flavors and a little love — delivered straight to your door.">
+    <meta property="og:image"
+        content="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=85">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Savora | Fresh Food, Fast Delivery">
+    <meta name="twitter:description"
+        content="Handcrafted meals made with fresh ingredients, bold flavors and a little love — delivered straight to your door.">
+    <meta name="twitter:image"
+        content="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=85">
+
+
+    <!-- Google Fonts -->
+        
+
+    <!-- Google Fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+
+    <!-- Font Awesome -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <!-- Main CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <div class="topbar">
+
+        <div class="container topbar-inner">
+
+            <div>
+
+                <i class="fa-solid fa-location-dot"></i>
+
+                Delivering across Lahore
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <span>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Open today 11:00 AM – 11:30 PM
+
+                </span>
+
+
+                <a href="tel:+923001234567">
+
+                    <i class="fa-solid fa-phone"></i>
+
+                    +92 300 1234567
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <header class="header">
+
+        <div class="container navbar">
+
+
+            <a href="#home" class="brand">
+
+                <span class="brand-icon">
+
+                    <i class="fa-solid fa-utensils"></i>
+
+                </span>
+
+                <span>Savora</span>
+
+            </a>
+
+
+
+            <nav class="nav" id="nav">
+
+                <a href="#home" class="active">
+                    Home
+                </a>
+
+                <a href="#menu">
+                    Menu
+                </a>
+
+                <a href="#about">
+                    Our Story
+                </a>
+
+                <a href="#reviews">
+                    Reviews
+                </a>
+
+                <a href="#contact">
+                    Contact
+                </a>
+
+            </nav>
+
+
+
+            <div class="nav-actions">
+
+
+                <!-- Search -->
+
+                <button
+                    type="button"
+                    class="icon-btn search-open"
+                    aria-label="Search">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                </button>
+
+
+
+                <!-- Track Order -->
+
+                <a
+                    href="{{ url_for('track_order_page') }}"
+                    class="icon-btn track-order-link"
+                    aria-label="Track your order"
+                    title="Track your order">
+
+                    <i class="fa-solid fa-location-crosshairs"></i>
+
+                </a>
+
+
+
+                <!-- Cart -->
+
+                <button
+                    type="button"
+                    class="cart-trigger"
+                    id="cartOpen"
+                    aria-label="Shopping cart">
+
+                    <i class="fa-solid fa-bag-shopping"></i>
+
+                    <span id="cartCount">0</span>
+
+                </button>
+
+
+
+                <!-- Order Now -->
+
+                <a href="#menu" class="nav-order">
+
+                    Order Now
+
+                </a>
+
+
+
+                <!-- Mobile Menu -->
+
+                <button
+                    type="button"
+                    class="mobile-menu"
+                    id="mobileMenu"
+                    aria-label="Open menu">
+
+                    <i class="fa-solid fa-bars"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main>
+
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="hero" id="home">
+
+            <div class="hero-pattern"></div>
+
+
+            <div class="container hero-grid">
+
+
+                <div class="hero-content">
+
+
+                    <div class="eyebrow">
+
+                        <span class="live-dot"></span>
+
+                        Freshly prepared • Delivered fast
+
+                    </div>
+
+
+
+                    <h1>
+
+                        Great food,
+
+                        <span>
+                            great moments.
+                        </span>
+
+                    </h1>
+
+
+
+                    <p class="hero-description">
+
+                        Handcrafted meals made with fresh ingredients,
+                        bold flavors and a little love — delivered
+                        straight to your door.
+
+                    </p>
+
+
+
+                    <div class="hero-actions">
+
+
+                        <a
+                            href="#menu"
+                            class="btn btn-primary">
+
+                            Explore Menu
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+
+
+                        <a
+                            href="#about"
+                            class="btn btn-light">
+
+                            Our Story
+
+                        </a>
+
+                    </div>
+
+
+
+                    <div class="trust-row">
+
+
+                        <div class="avatars">
+
+                            <span>A</span>
+                            <span>S</span>
+                            <span>M</span>
+                            <span>+</span>
+
+                        </div>
+
+
+
+                        <div>
+
+                            <div class="stars">
+
+                                ★★★★★
+
+                            </div>
+
+
+                            <strong>
+                                4.9/5
+                            </strong>
+
+
+                            <small>
+
+                                from 2,000+ happy customers
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="hero-visual">
+
+
+                    <div class="hero-glow"></div>
+
+
+                    <div class="hero-image-wrap">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1000&q=85"
+                            alt="Savora signature burger"
+                            class="hero-image">
+
+                    </div>
+
+
+
+                    <div class="floating-card rating-card">
+
+                        <div class="mini-icon orange">
+
+                            <i class="fa-solid fa-star"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                4.9
+                            </strong>
+
+                            <span>
+                                Top rated
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="floating-card delivery-card">
+
+                        <div class="mini-icon green">
+
+                            <i class="fa-solid fa-motorcycle"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                30 min
+                            </strong>
+
+                            <span>
+                                Fast delivery
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="hero-price">
+
+                        <span>
+                            Starting from
+                        </span>
+
+                        <strong>
+                            Rs. 999
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="hero-bottom">
+
+                <div class="container quick-info">
+
+
+                    <div>
+
+                        <i class="fa-solid fa-leaf"></i>
+
+                        <div>
+
+                            <strong>
+                                Fresh ingredients
+                            </strong>
+
+                            <span>
+                                Quality you can taste
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <i class="fa-solid fa-truck-fast"></i>
+
+                        <div>
+
+                            <strong>
+                                Quick delivery
+                            </strong>
+
+                            <span>
+                                At your door in 30 min
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <i class="fa-solid fa-shield-heart"></i>
+
+                        <div>
+
+                            <strong>
+                                Safe & secure
+                            </strong>
+
+                            <span>
+                                Easy online checkout
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <i class="fa-solid fa-headset"></i>
+
+                        <div>
+
+                            <strong>
+                                Daily support
+                            </strong>
+
+                            <span>
+                                We're here to help
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MENU
+        ================================================== -->
+
+               <section
+            class="section menu-section"
+            id="menu"
+            data-reveal="stagger">
+        
+
+
+            <div class="container">
+
+
+                <div class="section-head">
+
+
+                    <div>
+
+                        <span class="section-label">
+                            OUR MENU
+                        </span>
+
+                        <h2>
+                            What are you craving?
+                        </h2>
+
+                    </div>
+
+
+                    <p>
+                        Freshly prepared favorites,
+                        made to order.
+                    </p>
+
+                </div>
+
+
+
+                <!-- Search & Filters -->
+
+                <div class="menu-tools">
+
+
+                    <div class="menu-search">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input
+                            type="text"
+                            id="foodSearch"
+                            placeholder="Search burgers, pizza, pasta...">
+
+                    </div>
+
+
+
+                    <div class="filters">
+
+
+                        <button
+                            type="button"
+                            class="filter active"
+                            data-category="all">
+
+                            All
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter"
+                            data-category="burger">
+
+                            Burgers
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter"
+                            data-category="pizza">
+
+                            Pizza
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter"
+                            data-category="pasta">
+
+                            Pasta
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter"
+                            data-category="chicken">
+
+                            Chicken
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="filter"
+                            data-category="drinks">
+
+                            Drinks
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     FOOD GRID
+                     
+                     IMPORTANT:
+                     Hard-coded 6 food cards removed.
+                     Products will be loaded dynamically.
+                ================================================== -->
+
+                <div
+                    class="food-grid"
+                    id="foodGrid">
+
+                </div>
+
+
+
+                <div class="menu-more">
+
+                    <button
+                        type="button"
+                        class="outline-btn">
+
+                        View Full Menu
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             OFFER
+        ================================================== -->
+
+                <section class="offer-section" data-reveal>
+
+            <div class="container">
+
+                <div class="offer-banner">
+
+
+                    <div class="offer-content">
+
+
+                        <span class="offer-label">
+                            LIMITED TIME
+                        </span>
+
+
+                        <h2>
+
+                            Your first order tastes better with
+
+                            <strong>
+                                20% OFF.
+                            </strong>
+
+                        </h2>
+
+
+                        <p>
+
+                            Use code
+
+                            <strong>
+                                WELCOME20
+                            </strong>
+
+                            at checkout.
+
+                        </p>
+
+
+                        <button
+                            type="button"
+                            class="offer-copy"
+                            id="copyPromo">
+
+                            Copy code
+
+                            <i class="fa-regular fa-copy"></i>
+
+                        </button>
+
+                    </div>
+
+
+
+                    <div class="offer-visual">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=85"
+                            alt="Fresh pizza"
+                            loading="lazy">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             WHY SAVORA
+        ================================================== -->
+
+                <section class="section features-section" data-reveal="stagger">
+
+            <div class="container">
+
+
+                <div class="center-head">
+
+                    <span class="section-label">
+                        WHY SAVORA
+                    </span>
+
+                    <h2>
+                        More than just a meal.
+                    </h2>
+
+                    <p>
+                        We care about every part of your experience.
+                    </p>
+
+                </div>
+
+
+
+                <div class="features">
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+
+                            <i class="fa-solid fa-seedling"></i>
+
+                        </div>
+
+                        <h3>
+                            Fresh ingredients
+                        </h3>
+
+                        <p>
+                            We choose quality ingredients
+                            every single day.
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+
+                            <i class="fa-solid fa-fire-burner"></i>
+
+                        </div>
+
+                        <h3>
+                            Made to order
+                        </h3>
+
+                        <p>
+                            Every meal is cooked fresh
+                            after you order.
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+
+                            <i class="fa-solid fa-bolt"></i>
+
+                        </div>
+
+                        <h3>
+                            Fast delivery
+                        </h3>
+
+                        <p>
+                            Hot, fresh food delivered
+                            in around 30 minutes.
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+
+                            <i class="fa-solid fa-heart"></i>
+
+                        </div>
+
+                        <h3>
+                            Made with care
+                        </h3>
+
+                        <p>
+                            Great taste and great service
+                            are always our priority.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ABOUT
+        ================================================== -->
+
+        <section
+            class="section about-section"
+            id="about">
+
+
+            <div class="container about-grid">
+
+
+                <div class="about-gallery">
+
+
+                    <div class="about-main">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=85"
+                            alt="Savora restaurant interior"
+                            loading="lazy">
+
+                    </div>
+
+
+
+                    <div class="about-small">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80"
+                            alt="Restaurant dining area"
+                            loading="lazy">
+
+                    </div>
+
+
+
+                    <div class="experience">
+
+                        <strong>
+                            10+
+                        </strong>
+
+                        <span>
+                            years of flavor
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="about-copy">
+
+
+                    <span class="section-label">
+                        OUR STORY
+                    </span>
+
+
+                    <h2>
+
+                        Food made with
+
+                        <em>
+                            purpose.
+                        </em>
+
+                    </h2>
+
+
+                    <p>
+
+                        Savora started with one simple idea:
+                        food should feel special without feeling complicated.
+
+                    </p>
+
+
+                    <p>
+
+                        From our kitchen to your table, we focus on
+                        fresh ingredients, honest cooking and flavors
+                        that bring people together.
+
+                    </p>
+
+
+
+                    <div class="about-list">
+
+
+                        <div>
+
+                            <i class="fa-solid fa-check"></i>
+
+                            <span>
+                                Fresh ingredients every day
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <i class="fa-solid fa-check"></i>
+
+                            <span>
+                                Experienced local chefs
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <i class="fa-solid fa-check"></i>
+
+                            <span>
+                                Fast & reliable delivery
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <a
+                        href="#contact"
+                        class="btn btn-primary">
+
+                        Visit Savora
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             REVIEWS
+        ================================================== -->
+
+                <section
+            class="section reviews-section"
+            id="reviews"
+            data-reveal="stagger">
+
+
+            <div class="container">
+
+
+                <div class="center-head">
+
+                    <span class="section-label">
+                        CUSTOMER LOVE
+                    </span>
+
+                    <h2>
+                        Don't just take our word for it.
+                    </h2>
+
+                    <p>
+                        Thousands of customers keep coming back.
+                    </p>
+
+                </div>
+
+
+
+                <div class="review-grid">
+
+
+                    <article class="review-card">
+
+
+                        <div class="review-top">
+
+                            <div class="review-stars">
+                                ★★★★★
+                            </div>
+
+                            <span>
+                                Verified order
+                            </span>
+
+                        </div>
+
+
+                        <p>
+
+                            "Absolutely delicious. The burger arrived
+                            hot, fresh and packed beautifully.
+                            Definitely ordering again."
+
+                        </p>
+
+
+                        <div class="review-user">
+
+
+                            <div class="avatar">
+                                AK
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Ahmed K.
+                                </strong>
+
+                                <span>
+                                    Lahore
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <article class="review-card">
+
+
+                        <div class="review-top">
+
+                            <div class="review-stars">
+                                ★★★★★
+                            </div>
+
+                            <span>
+                                Verified order
+                            </span>
+
+                        </div>
+
+
+                        <p>
+
+                            "The pizza was incredible. Crispy crust,
+                            generous toppings and delivery was much
+                            faster than expected."
+
+                        </p>
+
+
+                        <div class="review-user">
+
+
+                            <div class="avatar">
+                                SA
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Sarah A.
+                                </strong>
+
+                                <span>
+                                    Lahore
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <article class="review-card">
+
+
+                        <div class="review-top">
+
+                            <div class="review-stars">
+                                ★★★★★
+                            </div>
+
+                            <span>
+                                Verified order
+                            </span>
+
+                        </div>
+
+
+                        <p>
+
+                            "Beautiful website, easy ordering and
+                            amazing food. Savora has become our
+                            weekend favorite."
+
+                        </p>
+
+
+                        <div class="review-user">
+
+
+                            <div class="avatar">
+                                MU
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    M. Usman
+                                </strong>
+
+                                <span>
+                                    Lahore
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             GALLERY
+        ================================================== -->
+
+                <section class="gallery-section" data-reveal>
+
+            <div class="container">
+
+
+                <div class="gallery-head">
+
+
+                    <div>
+
+                        <span class="section-label">
+                            FOLLOW THE FLAVOR
+                        </span>
+
+                        <h2>
+                            @savorafood
+                        </h2>
+
+                    </div>
+
+
+                    <a
+                        href="#"
+                        class="social-link">
+
+                        <i class="fa-brands fa-instagram"></i>
+
+                        Instagram
+
+                    </a>
+
+                </div>
+
+
+
+                <div class="gallery">
+
+
+                    <img
+                        src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80"
+                        alt="Fresh food"
+                        loading="lazy">
+
+
+                    <img
+                        src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80"
+                        alt="Healthy meal"
+                        loading="lazy">
+
+
+                    <img
+                        src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80"
+                        alt="Grilled food"
+                        loading="lazy">
+
+
+                    <img
+                        src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80"
+                        alt="Restaurant dish"
+                        loading="lazy">
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CONTACT
+        ================================================== -->
+
+        <section
+            class="contact-section"
+            id="contact">
+
+
+            <div class="container contact-grid">
+
+
+                <div>
+
+
+                    <span class="section-label">
+                        FIND US
+                    </span>
+
+
+                    <h2>
+
+                        Come hungry.
+
+                        Leave happy.
+
+                    </h2>
+
+
+                    <p>
+
+                        Visit us or order online.
+                        We're ready when you are.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="contact-details">
+
+
+                    <div class="contact-item">
+
+
+                        <div class="contact-icon">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Location
+                            </span>
+
+                            <strong>
+                                Khushab
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="contact-item">
+
+
+                        <div class="contact-icon">
+
+                            <i class="fa-regular fa-clock"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Opening hours
+                            </span>
+
+                            <strong>
+                                Mon – Sun · 11 AM – 11:30 PM
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="contact-item">
+
+
+                        <div class="contact-icon">
+
+                            <i class="fa-solid fa-phone"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Call us
+                            </span>
+
+                            <strong>
+                                +92 3144944746
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="map-placeholder">
+
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+
+                    <strong>
+                        Savora Food House
+                    </strong>
+
+
+                    <span>
+                        Jauharabad, Khushab
+                    </span>
+
+
+                    <a
+                        href="https://www.google.com/maps"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="map-btn">
+
+                        Get Directions
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="footer">
+
+
+        <div class="container footer-grid">
+
+
+            <div class="footer-brand">
+
+
+                <a
+                    href="#home"
+                    class="brand">
+
+                    <span class="brand-icon">
+
+                        <i class="fa-solid fa-utensils"></i>
+
+                    </span>
+
+                    Savora
+
+                </a>
+
+
+                <p>
+
+                    Fresh food, honest flavors and
+                    memorable moments.
+
+                </p>
+
+
+                <div class="footer-socials">
+
+
+                    <a
+                        href="#"
+                        aria-label="Instagram">
+
+                        <i class="fa-brands fa-instagram"></i>
+
+                    </a>
+
+
+                    <a
+                        href="#"
+                        aria-label="Facebook">
+
+                        <i class="fa-brands fa-facebook-f"></i>
+
+                    </a>
+
+
+                    <a
+                        href="#"
+                        aria-label="TikTok">
+
+                        <i class="fa-brands fa-tiktok"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="footer-column">
+
+
+                <h3>
+                    Explore
+                </h3>
+
+
+                <a href="#menu">
+                    Menu
+                </a>
+
+                <a href="#about">
+                    Our Story
+                </a>
+
+                <a href="#reviews">
+                    Reviews
+                </a>
+
+                <a href="#contact">
+                    Contact
+                </a>
+
+            </div>
+
+
+
+            <div class="footer-column">
+
+
+                <h3>
+                    Help
+                </h3>
+
+
+                <a href="#">
+                    Delivery Info
+                </a>
+
+                <a href="#">
+                    FAQs
+                </a>
+
+                <a href="{{ url_for('track_order_page') }}">
+                    Track Your Order
+                </a>
+
+                <a href="#">
+                    Privacy Policy
+                </a>
+
+                <a href="#">
+                    Terms
+                </a>
+
+            </div>
+
+
+
+            <div class="footer-column newsletter">
+
+
+                <h3>
+                    Get 10% off
+                </h3>
+
+
+                <p>
+
+                    Join our newsletter for exclusive
+                    offers and new menu updates.
+
+                </p>
+
+
+                <form id="newsletterForm">
+
+
+                    <input
+                        type="email"
+                        placeholder="Your email address"
+                        required>
+
+
+                    <button type="submit">
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="footer-bottom">
+
+
+            <div class="container">
+
+
+                <span>
+
+                    © 2026 Savora. All rights reserved.
+
+                </span>
+
+
+                <span>
+
+                    Crafted with
+
+                    <i class="fa-solid fa-heart"></i>
+
+                    for food lovers.
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         CART OVERLAY
+    ====================================================== -->
+
+    <div
+        class="cart-overlay"
+        id="cartOverlay">
+    </div>
+
+
+
+    <!-- =====================================================
+         CART DRAWER
+    ====================================================== -->
+
+    <aside
+        class="cart-drawer"
+        id="cartDrawer">
+
+
+        <div class="cart-head">
+
+
+            <div>
+
+                <span>
+                    Your order
+                </span>
+
+                <h2>
+                    Shopping Bag
+                </h2>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="cartClose"
+                aria-label="Close cart">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+
+        <div
+            class="cart-items"
+            id="cartItems">
+
+
+            <div class="empty-cart">
+
+
+                <div class="empty-icon">
+
+                    <i class="fa-solid fa-bag-shopping"></i>
+
+                </div>
+
+
+                <h3>
+                    Your bag is empty
+                </h3>
+
+
+                <p>
+                    Add something delicious from our menu.
+                </p>
+
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="emptyCartMenu">
+
+                    Explore Menu
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="cart-bottom">
+
+
+            <div class="promo-row">
+
+
+                <input
+                    type="text"
+                    id="promoInput"
+                    placeholder="Promo code">
+
+
+                <button
+                    type="button"
+                    id="applyPromo">
+
+                    Apply
+
+                </button>
+
+            </div>
+
+
+
+            <div class="summary">
+
+
+                <div>
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong id="subtotal">
+                        Rs. 0
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Delivery
+                    </span>
+
+                    <strong id="deliveryFee">
+                        Rs. 0
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Discount
+                    </span>
+
+                    <strong id="cartDiscount">
+                        Rs. 0
+                    </strong>
+
+                </div>
+
+
+                <div class="total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong id="total">
+                        Rs. 0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <button
+                type="button"
+                class="checkout-btn"
+                id="checkoutBtn">
+
+                Proceed to Checkout
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </button>
+
+
+
+            <small class="secure-note">
+
+                <i class="fa-solid fa-lock"></i>
+
+                Secure checkout · Guest checkout available
+
+            </small>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         SEARCH MODAL
+    ====================================================== -->
+
+    <div
+        class="search-modal"
+        id="searchModal">
+
+
+        <div class="search-box">
+
+
+            <button
+                type="button"
+                id="searchClose"
+                aria-label="Close search">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+
+            <span>
+                FIND YOUR FAVORITE
+            </span>
+
+
+            <h2>
+                What are you craving?
+            </h2>
+
+
+            <div class="big-search">
+
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                <input
+                    type="text"
+                    id="globalSearch"
+                    placeholder="Search our menu...">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MOBILE ORDER BAR
+    ====================================================== -->
+
+    <div class="mobile-order-bar">
+
+
+        <button
+            type="button"
+            id="mobileCart">
+
+
+            <i class="fa-solid fa-bag-shopping"></i>
+
+
+            <span>
+                Cart
+            </span>
+
+
+            <b id="mobileCartCount">
+                0
+            </b>
+
+        </button>
+
+
+
+        <a href="#menu">
+
+
+            <i class="fa-solid fa-utensils"></i>
+
+
+            Order Now
+
+        </a>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div
+        class="toast"
+        id="toast">
+
+
+        <i class="fa-solid fa-circle-check"></i>
+
+
+        <span id="toastMessage">
+            Added to cart
+        </span>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CHECKOUT MODAL
+    ====================================================== -->
+
+    <div
+        class="checkout-overlay"
+        id="checkoutOverlay">
+
+
+        <div class="checkout-modal">
+
+
+            <button
+                type="button"
+                class="checkout-close"
+                id="checkoutClose"
+                aria-label="Close checkout">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+
+
+            <div class="checkout-header">
+
+
+                <span class="section-label">
+                    CHECKOUT
+                </span>
+
+
+                <h2>
+                    Complete Your Order
+                </h2>
+
+
+                <p>
+
+                    Enter your details and choose your
+                    preferred payment method.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- CHECKOUT FORM -->
+
+            <form id="checkoutForm">
+
+
+                <div class="checkout-grid">
+
+
+                    <!-- CUSTOMER INFORMATION -->
+
+                    <div class="checkout-form-section">
+
+
+                        <h3>
+
+                            <i class="fa-regular fa-user"></i>
+
+                            Customer Information
+
+                        </h3>
+
+
+
+                        <div class="form-row">
+
+
+                            <div class="form-group">
+
+
+                                <label for="customerName">
+                                    Full Name
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="customerName"
+                                    placeholder="Enter your full name"
+                                    required>
+
+                            </div>
+
+
+
+                            <div class="form-group">
+
+
+                                <label for="customerPhone">
+                                    Phone Number
+                                </label>
+
+
+                                
+                            <input
+                                type="tel"
+                                id="customerPhone"
+                                inputmode="numeric"
+                                maxlength="11"
+                                pattern="[0-9]*"
+                                    required>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="form-group">
+
+
+                            <label for="customerEmail">
+                                Email Address
+                            </label>
+
+
+                            <input
+                                type="email"
+                                id="customerEmail"
+                                placeholder="example@gmail.com"
+                                required>
+
+                        </div>
+
+
+
+                        <!-- DELIVERY -->
+
+                        <h3 class="delivery-heading">
+
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+
+                            Delivery Address
+
+                        </h3>
+
+
+
+                        <div class="form-group">
+
+
+                            <label for="customerAddress">
+                                Complete Address
+                            </label>
+
+
+                            <textarea
+                                id="customerAddress"
+                                placeholder="House/Flat No, Street, Area..."
+                                required></textarea>
+
+                        </div>
+
+
+
+                        <div class="form-row">
+
+
+                            <div class="form-group">
+
+
+                                <label for="customerCity">
+                                    City
+                                </label>
+
+
+                                <select
+                                    id="customerCity"
+                                    required>
+
+
+                                    <option value="">
+                                        Select City
+                                    </option>
+
+
+                                    <option value="Lahore">
+                                        Lahore
+                                    </option>
+
+
+                                    <option value="Islamabad">
+                                        Islamabad
+                                    </option>
+
+
+                                    <option value="Rawalpindi">
+                                        Rawalpindi
+                                    </option>
+
+
+                                    <option value="Karachi">
+                                        Karachi
+                                    </option>
+
+
+                                    <option value="Faisalabad">
+                                        Faisalabad
+                                    </option>
+
+
+                                    <option value="Multan">
+                                        Multan
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <div class="form-group">
+
+
+                                <label for="deliveryInstructions">
+                                    Delivery Instructions
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="deliveryInstructions"
+                                    placeholder="Optional">
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- PAYMENT -->
+
+                        <h3 class="delivery-heading">
+
+
+                            <i class="fa-solid fa-credit-card"></i>
+
+
+                            Payment Method
+
+                        </h3>
+
+
+
+                        <div class="payment-options">
+
+
+                            <label class="payment-option">
+
+
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    value="Cash on Delivery"
+                                    checked>
+
+
+                                <span class="payment-icon">
+
+                                    <i class="fa-solid fa-money-bill-wave"></i>
+
+                                </span>
+
+
+                                <span>
+
+                                    <strong>
+                                        Cash on Delivery
+                                    </strong>
+
+                                    <small>
+                                        Pay when your order arrives
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+
+
+                            <label class="payment-option">
+
+
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    value="Card">
+
+
+                                <span class="payment-icon">
+
+                                    <i class="fa-solid fa-credit-card"></i>
+
+                                </span>
+
+
+                                <span>
+
+                                    <strong>
+                                        Debit / Credit Card
+                                    </strong>
+
+                                    <small>
+                                        Secure online payment
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+
+
+                            <label class="payment-option">
+
+
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    value="Mobile Wallet">
+
+
+                                <span class="payment-icon">
+
+                                    <i class="fa-solid fa-mobile-screen-button"></i>
+
+                                </span>
+
+
+                                <span>
+
+                                    <strong>
+                                        Mobile Wallet
+                                    </strong>
+
+                                    <small>
+                                        JazzCash / Easypaisa
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+
+                        <div class="wallet-details" id="walletDetails" style="display:none;">
+
+    <div class="wallet-provider-select">
+        <label class="wallet-provider-option">
+            <input type="radio" name="walletProvider" value="JazzCash" checked>
+            <span>JazzCash</span>
+        </label>
+        <label class="wallet-provider-option">
+            <input type="radio" name="walletProvider" value="Easypaisa">
+            <span>Easypaisa</span>
+        </label>
+    </div>
+
+    <div class="form-group">
+        <label for="walletMobileNumber">Wallet Mobile Number</label>
+        <input type="tel" id="walletMobileNumber" placeholder="03XXXXXXXXX" maxlength="11">
+    </div>
+
+    <div class="form-group" id="walletCnicGroup">
+        <label for="walletCnicLast6">CNIC (last 6 digits) — JazzCash only</label>
+        <input type="text" id="walletCnicLast6" placeholder="123456" maxlength="6">
+    </div>
+
+    <small style="display:block;color:#888;margin-top:4px;">
+        Aapko payment confirm karne ke liye ek prompt milega.
+    </small>
+
+</div>
+
+                    </div>
+
+
+
+                    <!-- ORDER SUMMARY -->
+
+                    <div class="checkout-summary">
+
+
+                        <h3>
+                            Your Order
+                        </h3>
+
+
+                        <div
+                            class="checkout-order-items"
+                            id="checkoutOrderItems">
+                        </div>
+
+
+
+                        <div class="summary-line">
+
+
+                            <span>
+                                Subtotal
+                            </span>
+
+
+                            <strong id="checkoutSubtotal">
+                                Rs. 0
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="summary-line">
+
+
+                            <span>
+                                Delivery Fee
+                            </span>
+
+
+                            <strong id="checkoutDeliveryFee">
+                                Rs. 0
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="summary-line discount-line">
+
+
+                            <span>
+                                Discount
+                            </span>
+
+
+                            <strong id="checkoutDiscount">
+                                - Rs. 0
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="summary-total">
+
+
+                            <span>
+                                Total
+                            </span>
+
+
+                            <strong id="checkoutGrandTotal">
+                                Rs. 0
+                            </strong>
+
+                        </div>
+
+
+
+                        <button
+                            type="submit"
+                            class="place-order-btn">
+
+                            Place Order
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </button>
+
+
+
+                        <p class="secure-text">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            Your information is secure
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ORDER SUCCESS
+    ====================================================== -->
+
+    <div
+        class="success-overlay"
+        id="successOverlay">
+
+
+        <div class="success-modal">
+
+
+            <div class="success-icon">
+
+                <i class="fa-solid fa-check"></i>
+
+            </div>
+
+
+            <h2>
+                Order Confirmed!
+            </h2>
+
+
+            <p>
+
+                Thank you for ordering from Savora.
+                Your delicious food is on the way.
+
+            </p>
+
+
+
+            <div class="order-number">
+
+
+                <span>
+                    Order ID
+                </span>
+
+
+                <strong id="orderId">
+                    SV-000000
+                </strong>
+
+            </div>
+
+
+
+            <div class="success-info">
+
+
+                <div>
+
+
+                    <i class="fa-solid fa-motorcycle"></i>
+
+
+                    <span>
+
+                        Estimated Delivery
+
+                        <strong>
+                            25–40 Minutes
+                        </strong>
+
+                    </span>
+
+                </div>
+
+
+
+                <div>
+
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+
+                    <span>
+
+                        Delivery Address
+
+                        <strong id="successAddress">
+                            Your Address
+                        </strong>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <a
+                href="{{ url_for('track_order_page') }}"
+                class="secondary-btn success-btn"
+                id="trackThisOrder"
+                style="margin-bottom:12px;">
+
+                Track This Order
+
+                <i class="fa-solid fa-location-crosshairs"></i>
+
+            </a>
+
+
+            <button
+                type="button"
+                class="primary-btn success-btn"
+                id="continueShopping">
+
+                Continue Shopping
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}">
+    </script>
+
+
+</body>
+
+</html>

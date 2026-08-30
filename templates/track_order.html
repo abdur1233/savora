@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+        content="Track your Savora order — enter your order number and phone to see live status.">
+
+    <meta name="theme-color" content="#f25c05">
+
+    <title>Track Your Order | Savora</title>
+
+    <!-- Favicon -->
+
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+
+    <!-- Google Fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Main CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Track Order CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/track-order.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <div class="topbar">
+
+        <div class="container topbar-inner">
+
+            <div>
+
+                <i class="fa-solid fa-location-dot"></i>
+
+                Delivering across Lahore
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <span>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Open today 11:00 AM – 11:30 PM
+
+                </span>
+
+
+                <a href="tel:+923001234567">
+
+                    <i class="fa-solid fa-phone"></i>
+
+                    +92 300 1234567
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <header class="header">
+
+        <div class="container navbar">
+
+            <a href="{{ url_for('home') }}" class="brand">
+
+                <span class="brand-icon">
+                    <i class="fa-solid fa-utensils"></i>
+                </span>
+
+                <span>Savora</span>
+
+            </a>
+
+
+            <nav class="nav" id="nav">
+
+                <a href="{{ url_for('home') }}">
+                    Home
+                </a>
+
+                <a href="{{ url_for('home') }}#menu">
+                    Menu
+                </a>
+
+                <a href="{{ url_for('home') }}#contact">
+                    Contact
+                </a>
+
+            </nav>
+
+
+            <div class="nav-actions">
+
+                <a
+                    href="{{ url_for('home') }}#menu"
+                    class="nav-order">
+
+                    Order Now
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         TRACK ORDER
+    ====================================================== -->
+
+    <main>
+
+        <section class="track-hero">
+
+            <div class="container">
+
+                <div class="track-hero-inner">
+
+                    <span class="eyebrow">
+                        <span class="live-dot"></span>
+                        Order Status
+                    </span>
+
+                    <h1>Track Your Order</h1>
+
+                    <p>
+                        Enter your order number and the phone
+                        number used at checkout to see live
+                        status.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="track-section">
+
+            <div class="container track-container">
+
+                <form id="trackForm" class="track-form">
+
+                    <div class="track-form-group">
+
+                        <label for="trackOrderNumber">
+                            Order Number
+                        </label>
+
+                        <input
+                            type="text"
+                            id="trackOrderNumber"
+                            placeholder="e.g. SV-20260827040111-611361"
+                            autocomplete="off"
+                            required>
+
+                    </div>
+
+                    <div class="track-form-group">
+
+                        <label for="trackPhone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="trackPhone"
+                            placeholder="e.g. 0300-1234567"
+                            autocomplete="off"
+                            required>
+
+                    </div>
+
+                    <button type="submit" id="trackSubmitBtn">
+
+                        <span class="btn-label">Track Order</span>
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                    </button>
+
+                </form>
+
+                <p class="track-hint">
+                    You can find your order number in the
+                    confirmation screen or confirmation email
+                    from your checkout.
+                </p>
+
+
+                <!-- ERROR STATE -->
+
+                <div class="track-message error" id="trackError" style="display:none;"></div>
+
+
+                <!-- RESULT -->
+
+                <div class="track-result" id="trackResult" style="display:none;">
+
+                    <div class="track-result-header">
+
+                        <div>
+                            <span>Order Number</span>
+                            <strong id="resultOrderNumber">—</strong>
+                        </div>
+
+                        <div class="track-status-badge" id="resultStatusBadge">
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS TIMELINE -->
+
+                    <div class="track-timeline" id="resultTimeline"></div>
+
+
+                    <!-- ORDER DETAILS -->
+
+                    <div class="track-details-grid">
+
+                        <div class="track-detail-card">
+
+                            <h3><i class="fa-solid fa-location-dot"></i> Delivery Address</h3>
+                            <p id="resultAddress">—</p>
+
+                        </div>
+
+                        <div class="track-detail-card">
+
+                            <h3><i class="fa-solid fa-credit-card"></i> Payment</h3>
+                            <p id="resultPayment">—</p>
+
+                        </div>
+
+                        <div class="track-detail-card">
+
+                            <h3><i class="fa-regular fa-clock"></i> Placed On</h3>
+                            <p id="resultPlacedOn">—</p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ITEMS -->
+
+                    <div class="track-items">
+
+                        <h3>Order Items</h3>
+
+                        <div id="resultItemsList"></div>
+
+                        <div class="track-totals">
+
+                            <div>
+                                <span>Subtotal</span>
+                                <span id="resultSubtotal">—</span>
+                            </div>
+
+                            <div id="resultDiscountRow" style="display:none;">
+                                <span>Discount</span>
+                                <span id="resultDiscount">—</span>
+                            </div>
+
+                            <div>
+                                <span>Delivery Fee</span>
+                                <span id="resultDelivery">—</span>
+                            </div>
+
+                            <div class="track-total-final">
+                                <span>Total</span>
+                                <span id="resultTotal">—</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="footer">
+
+        <div class="container footer-grid">
+
+            <div class="footer-brand">
+
+                <a href="{{ url_for('home') }}" class="brand">
+
+                    <span class="brand-icon">
+                        <i class="fa-solid fa-utensils"></i>
+                    </span>
+
+                    Savora
+
+                </a>
+
+                <p>
+                    Fresh food, honest flavors and
+                    memorable moments.
+                </p>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h3>Explore</h3>
+
+                <a href="{{ url_for('home') }}#menu">Menu</a>
+                <a href="{{ url_for('home') }}#about">Our Story</a>
+                <a href="{{ url_for('home') }}#contact">Contact</a>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h3>Help</h3>
+
+                <a href="{{ url_for('track_order_page') }}">Track Your Order</a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <div class="container">
+
+                <span>© 2026 Savora. All rights reserved.</span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/track-order.js') }}">
+    </script>
+
+</body>
+
+</html>
