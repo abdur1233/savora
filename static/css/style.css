@@ -805,6 +805,10 @@ a {
     padding: 12px 20px;
     font-size: 11px;
     font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
 }
 
 .outline-btn:hover {
@@ -2722,6 +2726,18 @@ a {
     border: 1px solid #e5e5e5;
     border-radius: 16px;
     box-sizing: border-box;
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+}
+
+/* CARD LIFT + SOFT SHADOW ON HOVER */
+
+.food-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 38px rgba(20, 15, 10, 0.14);
+    border-color: #f2c9ad;
 }
 
 /* IMAGE CONTAINER */
@@ -2735,13 +2751,79 @@ a {
     flex-shrink: 0;
 }
 
-/* IMAGE */
+/* IMAGE ZOOM ON HOVER (smooth, subtle) */
 
 .food-card .food-image img {
     width: 100%;
     height: 100% !important;
     display: block;
     object-fit: cover;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: scale(1);
+}
+
+.food-card:hover .food-image img {
+    transform: scale(1.08);
+}
+
+/* DARK OVERLAY + "VIEW DETAILS" ON HOVER */
+
+.food-card .food-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(15, 10, 5, 0.55) 0%,
+        rgba(15, 10, 5, 0.05) 55%,
+        rgba(15, 10, 5, 0) 100%
+    );
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 16px;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+}
+
+.food-card:hover .food-image-overlay {
+    opacity: 1;
+}
+
+.food-card .food-image-overlay span {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(4px);
+    transform: translateY(8px);
+    transition: transform 0.35s ease;
+}
+
+.food-card:hover .food-image-overlay span {
+    transform: translateY(0);
+}
+
+/* IMAGE BORDER / HIGHLIGHT ON HOVER */
+
+.food-card .food-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 0 var(--orange);
+    transition: box-shadow 0.35s ease;
+    pointer-events: none;
+}
+
+.food-card:hover .food-image::after {
+    box-shadow: inset 0 0 0 3px var(--orange);
 }
 
 /* CONTENT */
@@ -2831,7 +2913,10 @@ a {
     gap: 3px;
     cursor: pointer;
     font-size: 0;
-    transition: 0.2s ease;
+    transition:
+        background 0.25s ease,
+        transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.25s ease;
 }
 
 .food-card .add-btn i {
@@ -2839,8 +2924,13 @@ a {
 }
 
 .food-card .add-btn:hover {
-    background: #f45b0b;
-    transform: translateY(-2px);
+    background: var(--orange);
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 10px 20px rgba(242, 92, 5, 0.35);
+}
+
+.food-card .add-btn:active {
+    transform: translateY(-1px) scale(0.97);
 }
 
 /* HEART */
@@ -3194,5 +3284,17 @@ a {
 @media (max-width: 480px) {
     .customize-modal {
         max-height: 92vh;
+    }
+}
+
+
+/* Respect users who've asked for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .food-card,
+    .food-card .food-image img,
+    .food-card .food-image-overlay,
+    .food-card .food-image-overlay span,
+    .food-card .add-btn {
+        transition: none !important;
     }
 }

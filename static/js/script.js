@@ -185,6 +185,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         loading="lazy"
                     >
 
+                    <div class="food-image-overlay">
+                        <span>
+                            <i class="fa-solid fa-eye"></i>
+                            View Details
+                        </span>
+                    </div>
+
                     <button
                         type="button"
                         class="favorite heart-btn"
@@ -1467,6 +1474,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         event.preventDefault();
 
+        if (!checkoutOverlay) {
+
+            // Checkout modal only lives on the homepage.
+            // Cart is shared via localStorage, so just send
+            // the customer there and auto-open checkout.
+
+            window.location.href = "/?checkout=1";
+            return;
+
+        }
+
         openCheckout();
 
     });
@@ -2569,6 +2587,30 @@ async function chargeMobileWallet(provider, amount, mobileNumber, cnicLast6, ord
         updateCart();
 
     loadProducts();
+
+
+    /* =====================================================
+       AUTO-OPEN CHECKOUT
+       (customer clicked "Proceed to Checkout" on the
+        /menu page and got sent here with ?checkout=1)
+    ===================================================== */
+
+    if (
+        new URLSearchParams(window.location.search)
+            .get("checkout") === "1"
+    ) {
+
+        // Clean the URL so refreshing doesn't reopen it.
+
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+
+        setTimeout(openCheckout, 150);
+
+    }
 
 
     /* =========================================

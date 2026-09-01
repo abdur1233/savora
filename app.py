@@ -1533,6 +1533,14 @@ def track_order_page():
     )
 
 
+@app.route("/menu")
+def full_menu_page():
+
+    return render_template(
+        "menu.html"
+    )
+
+
 @app.route(
     "/api/track-order",
     methods=["POST"]
