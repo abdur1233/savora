@@ -2735,6 +2735,88 @@ async function chargeMobileWallet(provider, amount, mobileNumber, cnicLast6, ord
     }
 
 
+    /* =====================================================
+       GSAP ENHANCEMENTS
+       (purely visual — only runs if GSAP loaded from CDN.
+        The IntersectionObserver reveal system above keeps
+        working exactly as before either way, so nothing
+        breaks if GSAP ever fails to load.)
+    ===================================================== */
+
+    function initGsapEnhancements() {
+
+        if (typeof gsap === "undefined") return;
+
+        if (typeof ScrollTrigger !== "undefined") {
+            gsap.registerPlugin(ScrollTrigger);
+        }
+
+        /* ---- 1. HERO ENTRANCE ANIMATION ---- */
+
+        const heroHeading = document.querySelector(".hero h1");
+
+        if (heroHeading) {
+
+            const heroTimeline = gsap.timeline({
+                defaults: {
+                    ease: "power3.out",
+                    duration: 0.8,
+                    clearProps: "all"
+                }
+            });
+
+            heroTimeline
+                .from(".eyebrow", { opacity: 0, y: 20 })
+                .from(".hero h1", { opacity: 0, y: 30 }, "-=0.55")
+                .from(".hero-description", { opacity: 0, y: 20 }, "-=0.55")
+                .from(
+                    ".hero-actions .btn",
+                    { opacity: 0, y: 20, stagger: 0.15 },
+                    "-=0.45"
+                )
+                .from(".trust-row", { opacity: 0, y: 20 }, "-=0.35")
+                .from(
+                    ".hero-image-wrap",
+                    { opacity: 0, scale: 0.85, duration: 1 },
+                    "-=0.9"
+                )
+                .from(
+                    ".floating-card",
+                    { opacity: 0, scale: 0.5, stagger: 0.15 },
+                    "-=0.5"
+                )
+                .from(".hero-price", { opacity: 0, scale: 0.5 }, "-=0.35");
+
+        }
+
+
+        /* ---- 2. RATING NUMBER COUNT-UP ---- */
+
+        const ratingEl = document.querySelector(".trust-row strong");
+
+        if (ratingEl) {
+
+            const counter = { value: 0 };
+
+            gsap.to(counter, {
+                value: 4.9,
+                duration: 1.5,
+                delay: 0.7,
+                ease: "power2.out",
+                onUpdate: () => {
+                    ratingEl.textContent =
+                        counter.value.toFixed(1) + "/5";
+                }
+            });
+
+        }
+
+
+    }
+
+    initGsapEnhancements();
+
+
     console.log(
         "Savora Phase 4 JavaScript loaded successfully."
     );
