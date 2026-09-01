@@ -2579,6 +2579,62 @@ async function chargeMobileWallet(provider, amount, mobileNumber, cnicLast6, ord
     }
 
 
+    /* =====================================================
+       OFFER COUNTDOWN
+       (counts down to midnight — a genuine "today only"
+        deadline that refreshes naturally each day)
+    ===================================================== */
+
+    function startOfferCountdown() {
+
+        const hoursEl = $("#countdownHours");
+        const minutesEl = $("#countdownMinutes");
+        const secondsEl = $("#countdownSeconds");
+
+        if (!hoursEl || !minutesEl || !secondsEl) return;
+
+        function pad(number) {
+            return String(number).padStart(2, "0");
+        }
+
+        function tick() {
+
+            const now = new Date();
+
+            const midnight = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate() + 1,
+                0, 0, 0
+            );
+
+            const diff =
+                Math.max(0, midnight - now);
+
+            const hours =
+                Math.floor(diff / 3600000);
+
+            const minutes =
+                Math.floor((diff % 3600000) / 60000);
+
+            const seconds =
+                Math.floor((diff % 60000) / 1000);
+
+            hoursEl.textContent = pad(hours);
+            minutesEl.textContent = pad(minutes);
+            secondsEl.textContent = pad(seconds);
+
+        }
+
+        tick();
+
+        setInterval(tick, 1000);
+
+    }
+
+    startOfferCountdown();
+
+
     /* =========================================
        INITIALIZE
     ========================================= */
