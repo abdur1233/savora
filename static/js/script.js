@@ -274,6 +274,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             data-image="${escapeAttribute(
                                 image
                             )}"
+                            data-customize="${
+                                productHasCustomizations(product)
+                                    ? "true"
+                                    : "false"
+                            }"
                             ${isOutOfStock ? "disabled" : ""}
                             style="${
                                 isOutOfStock
@@ -282,7 +287,15 @@ document.addEventListener("DOMContentLoaded", () => {
                             }">
 
                             <i class="fa-solid fa-plus"></i>
-                            ${isOutOfStock ? "Out of Stock" : "Add"}
+                            ${
+                                isOutOfStock
+                                    ? "Out of Stock"
+                                    : (
+                                        productHasCustomizations(product)
+                                            ? "Customize"
+                                            : "Add"
+                                    )
+                            }
 
                         </button>
 
@@ -363,6 +376,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
                     return;
+                }
+
+                if (button.dataset.customize === "true") {
+
+                    const fullProduct =
+                        products.find(
+                            p => String(p.id) === String(id)
+                        );
+
+                    if (fullProduct) {
+                        openCustomizeModal(fullProduct);
+                        return;
+                    }
+
                 }
 
                 addToCart(
@@ -825,6 +852,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         ${escapeHTML(item.name)}
                     </h4>
 
+                    ${
+                        item.customizationSummary
+                            ? `
+                                <p class="cart-item-customizations">
+                                    ${escapeHTML(
+                                        item.customizationSummary
+                                    )}
+                                </p>
+                            `
+                            : ""
+                    }
+
                     <span>
                         Rs.
                         ${Number(
@@ -939,12 +978,31 @@ document.addEventListener("DOMContentLoaded", () => {
         id,
         name,
         price,
-        image = ""
+        image = "",
+        options = {}
     ) {
+
+        const selectedSize = options.selectedSize || "";
+        const selectedAddons = options.selectedAddons || [];
+        const selectedSpice = options.selectedSpice || "";
+        const customizationSummary =
+            options.customizationSummary || "";
+
+        // Items with different customizations must stay as
+        // separate cart lines, so we match on name + the
+        // exact selections, not just the name.
+
+        const optionKey = JSON.stringify({
+            selectedSize,
+            selectedAddons: [...selectedAddons].sort(),
+            selectedSpice
+        });
 
         const existing =
             cart.find(
-                item => item.name === name
+                item =>
+                    item.name === name &&
+                    (item.optionKey || "{}") === optionKey
             );
 
 
@@ -960,7 +1018,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 name: name,
                 price: Number(price),
                 quantity: 1,
-                image: image
+                image: image,
+                optionKey: optionKey,
+                selectedSize: selectedSize,
+                selectedAddons: selectedAddons,
+                selectedSpice: selectedSpice,
+                customizationSummary: customizationSummary
 
             });
 
@@ -1258,6 +1321,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         ${escapeHTML(item.name)}
 
                     </div>
+
+                    ${
+                        item.customizationSummary
+                            ? `
+                                <div class="checkout-product-customizations">
+                                    ${escapeHTML(
+                                        item.customizationSummary
+                                    )}
+                                </div>
+                            `
+                            : ""
+                    }
 
                     <div class="checkout-product-quantity">
 
@@ -1590,7 +1665,13 @@ async function chargeMobileWallet(provider, amount, mobileNumber, cnicLast6, ord
 
                     quantity: Number(item.quantity),
 
-                    image: item.image || ""
+                    image: item.image || "",
+
+                    selected_size: item.selectedSize || "",
+
+                    selected_addons: item.selectedAddons || [],
+
+                    selected_spice: item.selectedSpice || ""
 
                 })),
 
@@ -2184,6 +2265,298 @@ async function chargeMobileWallet(provider, amount, mobileNumber, cnicLast6, ord
     function escapeAttribute(value) {
 
         return escapeHTML(value);
+
+    }
+
+
+    /* =====================================================
+       ITEM CUSTOMIZATION (sizes / add-ons / spice levels)
+    ===================================================== */
+
+    function parseProductCustomizations(product) {
+
+        try {
+
+            const raw = product && product.customizations;
+
+            if (!raw) return {};
+
+            const parsed =
+                typeof raw === "string"
+                    ? JSON.parse(raw)
+                    : raw;
+
+            return parsed && typeof parsed === "object"
+                ? parsed
+                : {};
+
+        } catch (error) {
+
+            return {};
+
+        }
+
+    }
+
+    function productHasCustomizations(product) {
+
+        const config = parseProductCustomizations(product);
+
+        return Boolean(
+            (config.sizes && config.sizes.length) ||
+            (config.addons && config.addons.length) ||
+            (config.spice_levels && config.spice_levels.length)
+        );
+
+    }
+
+    function openCustomizeModal(product) {
+
+        const config = parseProductCustomizations(product);
+
+        const sizes = config.sizes || [];
+        const addons = config.addons || [];
+        const spiceLevels = config.spice_levels || [];
+
+        const basePrice = Number(product.price || 0);
+
+        const overlay = document.createElement("div");
+        overlay.className = "customize-overlay";
+
+        overlay.innerHTML = `
+            <div class="customize-modal">
+
+                <div class="customize-header">
+                    <h3>${escapeHTML(product.name || "")}</h3>
+                    <button
+                        type="button"
+                        class="customize-close"
+                        aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="customize-body">
+
+                    ${
+                        sizes.length
+                            ? `
+                            <div class="customize-section">
+                                <label class="customize-section-title">
+                                    Choose Size
+                                </label>
+                                ${sizes.map((size, index) => `
+                                    <label class="customize-option">
+                                        <span>
+                                            <input
+                                                type="radio"
+                                                name="customizeSize"
+                                                value="${escapeAttribute(size.name)}"
+                                                data-price="${Number(size.price) || 0}"
+                                                ${index === 0 ? "checked" : ""}>
+                                            ${escapeHTML(size.name)}
+                                        </span>
+                                        <span>
+                                            Rs. ${Number(size.price || 0).toLocaleString()}
+                                        </span>
+                                    </label>
+                                `).join("")}
+                            </div>
+                            `
+                            : ""
+                    }
+
+                    ${
+                        addons.length
+                            ? `
+                            <div class="customize-section">
+                                <label class="customize-section-title">
+                                    Add-ons
+                                </label>
+                                ${addons.map(addon => `
+                                    <label class="customize-option">
+                                        <span>
+                                            <input
+                                                type="checkbox"
+                                                name="customizeAddon"
+                                                value="${escapeAttribute(addon.name)}"
+                                                data-price="${Number(addon.price) || 0}">
+                                            ${escapeHTML(addon.name)}
+                                        </span>
+                                        <span>
+                                            ${
+                                                Number(addon.price) > 0
+                                                    ? "+ Rs. " + Number(addon.price).toLocaleString()
+                                                    : "Free"
+                                            }
+                                        </span>
+                                    </label>
+                                `).join("")}
+                            </div>
+                            `
+                            : ""
+                    }
+
+                    ${
+                        spiceLevels.length
+                            ? `
+                            <div class="customize-section">
+                                <label class="customize-section-title">
+                                    Spice Level
+                                </label>
+                                ${spiceLevels.map((level, index) => `
+                                    <label class="customize-option">
+                                        <span>
+                                            <input
+                                                type="radio"
+                                                name="customizeSpice"
+                                                value="${escapeAttribute(level)}"
+                                                ${index === 0 ? "checked" : ""}>
+                                            ${escapeHTML(level)}
+                                        </span>
+                                    </label>
+                                `).join("")}
+                            </div>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+                <div class="customize-footer">
+                    <div class="customize-total">
+                        Total: <strong class="customize-total-price">
+                            Rs. ${basePrice.toLocaleString()}
+                        </strong>
+                    </div>
+                    <button
+                        type="button"
+                        class="btn-primary customize-add-btn">
+                        Add to Cart
+                    </button>
+                </div>
+
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+        document.body.style.overflow = "hidden";
+
+        const totalPriceEl =
+            overlay.querySelector(".customize-total-price");
+
+        function recalcTotal() {
+
+            const selectedSizeInput =
+                overlay.querySelector(
+                    "input[name='customizeSize']:checked"
+                );
+
+            let price = selectedSizeInput
+                ? Number(selectedSizeInput.dataset.price) || 0
+                : basePrice;
+
+            overlay
+                .querySelectorAll(
+                    "input[name='customizeAddon']:checked"
+                )
+                .forEach(input => {
+                    price += Number(input.dataset.price) || 0;
+                });
+
+            totalPriceEl.textContent =
+                "Rs. " + price.toLocaleString();
+
+            return price;
+
+        }
+
+        overlay.addEventListener("change", recalcTotal);
+
+        function closeModal() {
+            document.body.removeChild(overlay);
+            document.body.style.overflow = "";
+        }
+
+        overlay
+            .querySelector(".customize-close")
+            .addEventListener("click", closeModal);
+
+        overlay.addEventListener("click", (event) => {
+            if (event.target === overlay) closeModal();
+        });
+
+        overlay
+            .querySelector(".customize-add-btn")
+            .addEventListener("click", () => {
+
+                const finalPrice = recalcTotal();
+
+                const selectedSizeInput =
+                    overlay.querySelector(
+                        "input[name='customizeSize']:checked"
+                    );
+
+                const selectedSpiceInput =
+                    overlay.querySelector(
+                        "input[name='customizeSpice']:checked"
+                    );
+
+                const selectedAddonInputs =
+                    Array.from(
+                        overlay.querySelectorAll(
+                            "input[name='customizeAddon']:checked"
+                        )
+                    );
+
+                const selections = {
+                    selectedSize: selectedSizeInput
+                        ? selectedSizeInput.value
+                        : "",
+                    selectedAddons: selectedAddonInputs.map(
+                        input => input.value
+                    ),
+                    selectedSpice: selectedSpiceInput
+                        ? selectedSpiceInput.value
+                        : ""
+                };
+
+                const summaryParts = [];
+
+                if (selections.selectedSize) {
+                    summaryParts.push(
+                        "Size: " + selections.selectedSize
+                    );
+                }
+
+                if (selections.selectedAddons.length) {
+                    summaryParts.push(
+                        "Add-ons: " +
+                        selections.selectedAddons.join(", ")
+                    );
+                }
+
+                if (selections.selectedSpice) {
+                    summaryParts.push(
+                        "Spice: " + selections.selectedSpice
+                    );
+                }
+
+                addToCart(
+                    product.id,
+                    product.name,
+                    finalPrice,
+                    product.image,
+                    {
+                        ...selections,
+                        customizationSummary:
+                            summaryParts.join(" | ")
+                    }
+                );
+
+                closeModal();
+
+            });
 
     }
 

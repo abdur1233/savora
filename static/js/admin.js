@@ -1244,6 +1244,89 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /* =====================================================
+       CUSTOMIZATION HELPERS
+       (Sizes / Add-ons are typed as "Name:Price, Name:Price"
+        Spice Levels are typed as "Name, Name, Name")
+    ===================================================== */
+
+    function parseNamePriceList(text) {
+
+        return (text || "")
+            .split(",")
+            .map(part => part.trim())
+            .filter(part => part.length > 0)
+            .map(part => {
+
+                const pieces = part.split(":");
+
+                const name =
+                    (pieces[0] || "").trim();
+
+                const price =
+                    Number(
+                        (pieces[1] || "0").trim()
+                    ) || 0;
+
+                return { name, price };
+
+            })
+            .filter(entry => entry.name.length > 0);
+
+    }
+
+    function parseNameList(text) {
+
+        return (text || "")
+            .split(",")
+            .map(part => part.trim())
+            .filter(part => part.length > 0);
+
+    }
+
+    function formatNamePriceList(list) {
+
+        if (!Array.isArray(list)) return "";
+
+        return list
+            .filter(entry => entry && entry.name)
+            .map(entry => `${entry.name}:${entry.price ?? 0}`)
+            .join(", ");
+
+    }
+
+    function formatNameList(list) {
+
+        if (!Array.isArray(list)) return "";
+
+        return list
+            .filter(name => !!name)
+            .join(", ");
+
+    }
+
+    function parseProductCustomizations(product) {
+
+        try {
+
+            const raw =
+                product && product.customizations;
+
+            if (!raw) return {};
+
+            return typeof raw === "string"
+                ? JSON.parse(raw)
+                : raw;
+
+        } catch (error) {
+
+            return {};
+
+        }
+
+    }
+
+
     function openProductModal(product = null) {
 
         $("#productModal")
@@ -1301,6 +1384,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         $("#productBadge").value =
             product.badge || "";
+
+        const customizations =
+            parseProductCustomizations(product);
+
+        $("#productSizes").value =
+            formatNamePriceList(
+                customizations.sizes
+            );
+
+        $("#productAddons").value =
+            formatNamePriceList(
+                customizations.addons
+            );
+
+        $("#productSpiceLevels").value =
+            formatNameList(
+                customizations.spice_levels
+            );
 
     }
 
@@ -1371,7 +1472,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 badge:
                     $("#productBadge")
                         .value
-                        .trim()
+                        .trim(),
+
+                customizations:
+                    JSON.stringify({
+
+                        sizes: parseNamePriceList(
+                            $("#productSizes").value
+                        ),
+
+                        addons: parseNamePriceList(
+                            $("#productAddons").value
+                        ),
+
+                        spice_levels: parseNameList(
+                            $("#productSpiceLevels").value
+                        )
+
+                    })
 
             };
 

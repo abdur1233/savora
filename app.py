@@ -98,6 +98,130 @@ def is_valid_phone(phone):
     )
 
 
+def resolve_item_customizations(
+    product_row,
+    requested
+):
+    """
+    Works out the real unit price for one cart line and a
+    short human-readable summary of what was picked, using
+    ONLY the sizes / add-ons / spice levels that are actually
+    configured for this product in the database.
+
+    'requested' is whatever the client sent for this item
+    (selected_size, selected_addons, selected_spice). Nothing
+    from the client is ever trusted for price — every match is
+    looked up against the product's own customizations JSON,
+    so a tampered request just falls back to safe defaults.
+
+    Returns: (unit_price, summary_text)
+    """
+
+    base_price = float(product_row["price"] or 0)
+
+    try:
+
+        config = json_module.loads(
+            product_row["customizations"] or "{}"
+        )
+
+    except (TypeError, ValueError):
+
+        config = {}
+
+    if not isinstance(config, dict):
+        config = {}
+
+    sizes = config.get("sizes") or []
+    addons = config.get("addons") or []
+    spice_levels = config.get("spice_levels") or []
+
+    unit_price = base_price
+    summary_parts = []
+
+    # ---- SIZE ----
+
+    requested_size = str(
+        requested.get("selected_size", "")
+    ).strip()
+
+    if requested_size:
+
+        for size in sizes:
+
+            if (
+                isinstance(size, dict)
+                and str(size.get("name", "")).strip()
+                    == requested_size
+            ):
+
+                try:
+                    unit_price = float(size.get("price", base_price))
+                except (TypeError, ValueError):
+                    unit_price = base_price
+
+                summary_parts.append(
+                    f"Size: {requested_size}"
+                )
+
+                break
+
+    # ---- ADD-ONS ----
+
+    requested_addons = requested.get("selected_addons") or []
+
+    if not isinstance(requested_addons, list):
+        requested_addons = []
+
+    valid_addon_names = []
+
+    for addon in addons:
+
+        if not isinstance(addon, dict):
+            continue
+
+        addon_name = str(addon.get("name", "")).strip()
+
+        if addon_name and addon_name in requested_addons:
+
+            try:
+                addon_price = float(addon.get("price", 0))
+            except (TypeError, ValueError):
+                addon_price = 0
+
+            unit_price += addon_price
+            valid_addon_names.append(addon_name)
+
+    if valid_addon_names:
+
+        summary_parts.append(
+            "Add-ons: " + ", ".join(valid_addon_names)
+        )
+
+    # ---- SPICE LEVEL ----
+
+    requested_spice = str(
+        requested.get("selected_spice", "")
+    ).strip()
+
+    valid_spice_levels = [
+        str(level).strip() for level in spice_levels
+    ]
+
+    if requested_spice and requested_spice in valid_spice_levels:
+
+        summary_parts.append(
+            f"Spice: {requested_spice}"
+        )
+
+    if unit_price < 0:
+        unit_price = 0
+
+    summary_text = " | ".join(summary_parts)
+
+    return unit_price, summary_text
+
+
 def env_or(key, default=""):
     """
     Like os.getenv, but treats an empty/blank value in .env
@@ -1018,6 +1142,9 @@ def init_db():
 
             available INTEGER DEFAULT 1,
 
+            customizations
+                TEXT DEFAULT '{}',
+
             created_at
                 TIMESTAMP
                 DEFAULT CURRENT_TIMESTAMP
@@ -1116,6 +1243,9 @@ def init_db():
             image
                 TEXT DEFAULT '',
 
+            customizations
+                TEXT DEFAULT '',
+
             FOREIGN KEY(order_id)
                 REFERENCES orders(id)
                 ON DELETE CASCADE,
@@ -1143,6 +1273,13 @@ def init_db():
         "products",
         "stock",
         "INTEGER NOT NULL DEFAULT 100"
+    )
+
+    add_column_if_missing(
+        conn,
+        "products",
+        "customizations",
+        "TEXT DEFAULT '{}'"
     )
 
     # ORDERS
@@ -1300,6 +1437,13 @@ def init_db():
         conn,
         "order_items",
         "image",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        conn,
+        "order_items",
+        "customizations",
         "TEXT DEFAULT ''"
     )
 
@@ -1470,7 +1614,8 @@ def track_order_api():
                 price,
                 quantity,
                 item_total,
-                image
+                image,
+                customizations
             FROM order_items
             WHERE order_id = ?
             """,
@@ -1807,6 +1952,30 @@ def add_product():
             data.get("available", 1)
         )
 
+        # Customizations (sizes / add-ons / spice levels) are
+        # sent from the admin panel as a JSON string. Only
+        # store it if it's valid JSON so a bad value can
+        # never break the storefront.
+
+        customizations_raw = data.get(
+            "customizations",
+            "{}"
+        )
+
+        try:
+
+            if isinstance(customizations_raw, str):
+                json_module.loads(customizations_raw)
+                customizations = customizations_raw
+            else:
+                customizations = json_module.dumps(
+                    customizations_raw
+                )
+
+        except (TypeError, ValueError):
+
+            customizations = "{}"
+
         try:
 
             stock = int(
@@ -1840,9 +2009,10 @@ def add_product():
                 image,
                 rating,
                 available,
-                stock
+                stock,
+                customizations
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 name,
@@ -1852,7 +2022,8 @@ def add_product():
                 image,
                 rating,
                 available,
-                stock
+                stock,
+                customizations
             )
         )
 
@@ -1932,6 +2103,25 @@ def update_product(product_id):
             data.get("available", 1)
         )
 
+        customizations_raw = data.get(
+            "customizations",
+            "{}"
+        )
+
+        try:
+
+            if isinstance(customizations_raw, str):
+                json_module.loads(customizations_raw)
+                customizations = customizations_raw
+            else:
+                customizations = json_module.dumps(
+                    customizations_raw
+                )
+
+        except (TypeError, ValueError):
+
+            customizations = "{}"
+
         try:
 
             stock = int(
@@ -1966,7 +2156,8 @@ def update_product(product_id):
                 image = ?,
                 rating = ?,
                 available = ?,
-                stock = ?
+                stock = ?,
+                customizations = ?
             WHERE id = ?
             """,
             (
@@ -1978,6 +2169,7 @@ def update_product(product_id):
                 rating,
                 available,
                 stock,
+                customizations,
                 product_id
             )
         )
@@ -2778,7 +2970,7 @@ def create_order():
                     product_row = conn.execute(
                         """
                         SELECT id, name, price, image,
-                               available, stock
+                               available, stock, customizations
                         FROM products
                         WHERE id = ?
                         """,
@@ -2808,7 +3000,19 @@ def create_order():
                 continue
 
             item_name = product_row["name"]
-            price = float(product_row["price"])
+
+            # Size / add-ons / spice level selected by the
+            # customer are validated against this product's
+            # own configuration — the price is ALWAYS computed
+            # here, never trusted from the client.
+
+            price, customization_summary = (
+                resolve_item_customizations(
+                    product_row,
+                    item if isinstance(item, dict) else {}
+                )
+            )
+
             image = product_row["image"] or ""
 
             if price < 0:
@@ -2826,7 +3030,8 @@ def create_order():
                 "price": price,
                 "quantity": quantity,
                 "image": image,
-                "item_total": item_total
+                "item_total": item_total,
+                "customizations": customization_summary
             })
 
         if out_of_stock_messages:
@@ -2979,12 +3184,13 @@ def create_order():
                     price,
                     quantity,
                     item_total,
-                    image
+                    image,
+                    customizations
 
                 )
 
                 VALUES (
-                    ?, ?, ?, ?, ?, ?, ?
+                    ?, ?, ?, ?, ?, ?, ?, ?
                 )
                 """,
                 (
@@ -2994,7 +3200,8 @@ def create_order():
                     item["price"],
                     item["quantity"],
                     item["item_total"],
-                    item["image"]
+                    item["image"],
+                    item.get("customizations", "")
                 )
             )
 
