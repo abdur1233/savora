@@ -494,6 +494,18 @@ document.addEventListener("DOMContentLoaded", () => {
                             <span>
                                 ${escapeHTML(item.product_name)}
                                 × ${item.quantity}
+                                ${
+                                    item.customizations
+                                        ? `
+                                            <br>
+                                            <small style="color:#888;">
+                                                ${escapeHTML(
+                                                    item.customizations
+                                                )}
+                                            </small>
+                                        `
+                                        : ""
+                                }
                             </span>
 
                             <strong>
