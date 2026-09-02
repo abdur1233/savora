@@ -52,6 +52,13 @@ import json as json_module
 import requests
 import os
 
+try:
+    import psycopg2
+    import psycopg2.extras
+    PSYCOPG2_AVAILABLE = True
+except ImportError:
+    PSYCOPG2_AVAILABLE = False
+
 from pathlib import Path
 from datetime import datetime, timedelta
 
@@ -67,6 +74,30 @@ app.config["SECRET_KEY"] = os.getenv(
 ) or secrets.token_hex(32)
 
 DATABASE = Path(__file__).parent / "savora.db"
+
+# ---------------------------------------------------------
+# PostgreSQL (optional, permanent database)
+#
+# If the DATABASE_URL environment variable is set (Render
+# provides this automatically for a PostgreSQL instance),
+# the app stores everything in PostgreSQL so data survives
+# every redeploy. If it's not set, the app falls back to the
+# original local SQLite file exactly as before — nothing
+# changes for local development.
+# ---------------------------------------------------------
+
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+
+USE_POSTGRES = bool(DATABASE_URL) and PSYCOPG2_AVAILABLE
+
+if DATABASE_URL and not PSYCOPG2_AVAILABLE:
+
+    print(
+        "WARNING: DATABASE_URL is set but psycopg2 is not "
+        "installed — falling back to SQLite. Run "
+        "'pip install psycopg2-binary' and redeploy.",
+        flush=True
+    )
 
 
 # =========================================================
@@ -1042,7 +1073,110 @@ def easypaisa_charge(
 # DATABASE CONNECTION
 # =========================================================
 
+def _adapt_sql_for_postgres(sql):
+    """
+    Converts the small number of SQLite-specific bits this
+    codebase uses into PostgreSQL-compatible SQL:
+      - '?' placeholders -> '%s'
+      - INTEGER PRIMARY KEY AUTOINCREMENT -> SERIAL PRIMARY KEY
+    Every other query in this app is plain, portable SQL and
+    needs no changes at all.
+    """
+
+    sql = sql.replace(
+        "INTEGER PRIMARY KEY AUTOINCREMENT",
+        "SERIAL PRIMARY KEY"
+    )
+
+    sql = sql.replace("?", "%s")
+
+    return sql
+
+
+class PGCursor:
+    """
+    Wraps a real psycopg2 cursor so the rest of this app can
+    keep calling cursor.execute(sql, params) / .lastrowid /
+    .fetchone() / .fetchall() exactly like it did with
+    sqlite3, without changing every call site.
+    """
+
+    def __init__(self, raw_cursor):
+        self._cursor = raw_cursor
+        self.lastrowid = None
+
+    def execute(self, sql, params=()):
+
+        adapted_sql = _adapt_sql_for_postgres(sql)
+
+        self._cursor.execute(adapted_sql, params)
+
+        if "RETURNING" in adapted_sql.upper():
+
+            row = self._cursor.fetchone()
+
+            if row:
+                self.lastrowid = row["id"]
+
+        return self
+
+    def fetchone(self):
+        return self._cursor.fetchone()
+
+    def fetchall(self):
+        return self._cursor.fetchall()
+
+    @property
+    def rowcount(self):
+        return self._cursor.rowcount
+
+
+class PGConnection:
+    """
+    Wraps a real psycopg2 connection so the rest of this app
+    can keep calling conn.execute(...) / conn.cursor() /
+    conn.commit() / conn.close() exactly like it did with
+    sqlite3, without changing every call site.
+    """
+
+    def __init__(self, raw_conn):
+        self._conn = raw_conn
+
+    def execute(self, sql, params=()):
+
+        cursor = PGCursor(
+            self._conn.cursor(
+                cursor_factory=psycopg2.extras.RealDictCursor
+            )
+        )
+
+        return cursor.execute(sql, params)
+
+    def cursor(self):
+
+        return PGCursor(
+            self._conn.cursor(
+                cursor_factory=psycopg2.extras.RealDictCursor
+            )
+        )
+
+    def commit(self):
+        self._conn.commit()
+
+    def rollback(self):
+        self._conn.rollback()
+
+    def close(self):
+        self._conn.close()
+
+
 def get_db():
+
+    if USE_POSTGRES:
+
+        raw_conn = psycopg2.connect(DATABASE_URL)
+
+        return PGConnection(raw_conn)
 
     conn = sqlite3.connect(
         DATABASE,
@@ -1071,6 +1205,20 @@ def column_exists(
     table_name,
     column_name
 ):
+
+    if USE_POSTGRES:
+
+        row = conn.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = ?
+            AND column_name = ?
+            """,
+            (table_name, column_name)
+        ).fetchone()
+
+        return row is not None
 
     columns = conn.execute(
         f'PRAGMA table_info("{table_name}")'
@@ -2021,7 +2169,8 @@ def add_product():
                 customizations
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
+            """
+            + (" RETURNING id" if USE_POSTGRES else ""),
             (
                 name,
                 category,
@@ -2938,7 +3087,17 @@ def create_order():
 
         conn = get_db()
 
-        conn.execute("BEGIN IMMEDIATE")
+        if not USE_POSTGRES:
+
+            # SQLite: acquire the write lock immediately so two
+            # simultaneous orders can't both buy the last item.
+            # (PostgreSQL doesn't need this — psycopg2 already
+            #  runs every connection inside an implicit
+            #  transaction, and the UPDATE statement further
+            #  down naturally row-locks each product as it's
+            #  reserved.)
+
+            conn.execute("BEGIN IMMEDIATE")
 
         subtotal = 0
 
@@ -3154,7 +3313,8 @@ def create_order():
                 ?, ?, ?, ?, ?, ?,
                 ?, ?, ?
             )
-            """,
+            """
+            + (" RETURNING id" if USE_POSTGRES else ""),
             (
                 order_number,
                 customer_name,
@@ -3415,10 +3575,13 @@ def get_today_analytics():
             WHERE
                 date(created_at)
                 =
-                date('now', 'localtime')
+                ?
 
                 AND status != 'Cancelled'
-            """
+            """,
+            (
+                datetime.now().strftime("%Y-%m-%d"),
+            )
         ).fetchone()
 
         # =================================================
