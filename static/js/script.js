@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ========================================= */
 
     let products = [];
+    let fullMenuVisibleCount = 6;
 
     async function loadProducts() {
 
@@ -146,9 +147,21 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        const isFullMenuLayout =
+            menuContainer.dataset.layout === "full-menu";
+
+        let listToRender = productList;
+
+        if (isFullMenuLayout) {
+
+            listToRender =
+                productList.slice(0, fullMenuVisibleCount);
+
+        }
+
         menuContainer.innerHTML = "";
 
-        productList.forEach(product => {
+        listToRender.forEach(product => {
 
             const card = document.createElement("article");
 
@@ -175,146 +188,290 @@ document.addEventListener("DOMContentLoaded", () => {
             const isOutOfStock =
                 stock <= 0;
 
-            card.innerHTML = `
+            const stockBadgeHTML = isOutOfStock
+                ? `<span class="out-of-stock-badge" style="
+                    position:absolute;
+                    top:10px;
+                    left:10px;
+                    background:#d9363e;
+                    color:#fff;
+                    padding:4px 10px;
+                    border-radius:6px;
+                    font-size:12px;
+                    font-weight:600;
+                ">Out of Stock</span>`
+                : (
+                    stock < 5
+                        ? `<span class="low-stock-badge" style="
+                            position:absolute;
+                            top:10px;
+                            left:10px;
+                            background:#f25c05;
+                            color:#fff;
+                            padding:4px 10px;
+                            border-radius:6px;
+                            font-size:12px;
+                            font-weight:600;
+                        ">Only ${stock} left</span>`
+                        : ""
+                );
 
-                <div class="food-image">
+            if (isFullMenuLayout) {
 
-                    <img
-                        src="${escapeAttribute(image)}"
-                        alt="${escapeAttribute(product.name)}"
-                        loading="lazy"
-                    >
+                card.innerHTML = `
 
-                    <div class="food-image-overlay">
-                        <span>
-                            <i class="fa-solid fa-eye"></i>
-                            View Details
-                        </span>
-                    </div>
+                    <div class="food-image">
 
-                    <button
-                        type="button"
-                        class="favorite heart-btn"
-                        aria-label="Add to favorites">
+                        <img
+                            src="${escapeAttribute(image)}"
+                            alt="${escapeAttribute(product.name)}"
+                            loading="lazy"
+                        >
 
-                        <i class="fa-regular fa-heart"></i>
-
-                    </button>
-
-                    ${
-                        isOutOfStock
-                            ? `<span class="out-of-stock-badge" style="
-                                position:absolute;
-                                top:10px;
-                                left:10px;
-                                background:#d9363e;
-                                color:#fff;
-                                padding:4px 10px;
-                                border-radius:6px;
-                                font-size:12px;
-                                font-weight:600;
-                            ">Out of Stock</span>`
-                            : (
-                                stock < 5
-                                    ? `<span class="low-stock-badge" style="
-                                        position:absolute;
-                                        top:10px;
-                                        left:10px;
-                                        background:#f25c05;
-                                        color:#fff;
-                                        padding:4px 10px;
-                                        border-radius:6px;
-                                        font-size:12px;
-                                        font-weight:600;
-                                    ">Only ${stock} left</span>`
-                                    : ""
-                            )
-                    }
-
-                </div>
-
-
-                <div class="food-content">
-
-                    <span class="food-category">
-                        ${escapeHTML(product.category || "")}
-                    </span>
-
-                    <h3>
-                        ${escapeHTML(product.name || "")}
-                    </h3>
-
-                    <p>
-                        ${escapeHTML(product.description || "")}
-                    </p>
-
-                    <div class="food-rating">
-
-                        <span class="stars">
-                            ${stars}
-                        </span>
-
-                        <span>
-                            ${rating.toFixed(1)}
-                        </span>
-
-                    </div>
-
-
-                    <div class="food-bottom">
-
-                        <strong>
-                            Rs. ${Number(
-                                product.price || 0
-                            ).toLocaleString()}
-                        </strong>
-
+                        <div class="food-image-overlay">
+                            <span>
+                                <i class="fa-solid fa-eye"></i>
+                                View Details
+                            </span>
+                        </div>
 
                         <button
                             type="button"
-                            class="add-btn"
-                            data-id="${product.id || ""}"
-                            data-name="${escapeAttribute(
-                                product.name || ""
-                            )}"
-                            data-price="${product.price || 0}"
-                            data-image="${escapeAttribute(
-                                image
-                            )}"
-                            data-customize="${
-                                productHasCustomizations(product)
-                                    ? "true"
-                                    : "false"
-                            }"
-                            ${isOutOfStock ? "disabled" : ""}
-                            style="${
-                                isOutOfStock
-                                    ? "opacity:0.5; cursor:not-allowed;"
-                                    : ""
-                            }">
+                            class="favorite heart-btn"
+                            aria-label="Add to favorites">
 
-                            <i class="fa-solid fa-plus"></i>
-                            ${
-                                isOutOfStock
-                                    ? "Out of Stock"
-                                    : (
-                                        productHasCustomizations(product)
-                                            ? "Customize"
-                                            : "Add"
-                                    )
-                            }
+                            <i class="fa-regular fa-heart"></i>
 
                         </button>
 
+                        ${stockBadgeHTML}
+
                     </div>
 
-                </div>
 
-            `;
+                    <div class="food-content">
+
+                        <span class="food-category">
+                            ${escapeHTML(product.category || "")}
+                        </span>
+
+                        <h3>
+                            ${escapeHTML(product.name || "")}
+                        </h3>
+
+                        <div class="food-rating">
+
+                            <span class="stars">
+                                ${stars}
+                            </span>
+
+                            <span>
+                                ${rating.toFixed(1)}
+                            </span>
+
+                        </div>
+
+
+                        <div class="food-bottom menu-card-bottom">
+
+                            <strong>
+                                Rs. ${Number(
+                                    product.price || 0
+                                ).toLocaleString()}
+                            </strong>
+
+
+                            <div class="menu-card-actions">
+
+                                <div class="qty-stepper">
+
+                                    <button
+                                        type="button"
+                                        class="qty-minus"
+                                        aria-label="Decrease quantity">
+                                        −
+                                    </button>
+
+                                    <span class="qty-value">1</span>
+
+                                    <button
+                                        type="button"
+                                        class="qty-plus"
+                                        aria-label="Increase quantity">
+                                        +
+                                    </button>
+
+                                </div>
+
+
+                                <button
+                                    type="button"
+                                    class="add-btn"
+                                    data-id="${product.id || ""}"
+                                    data-name="${escapeAttribute(
+                                        product.name || ""
+                                    )}"
+                                    data-price="${product.price || 0}"
+                                    data-image="${escapeAttribute(
+                                        image
+                                    )}"
+                                    data-customize="${
+                                        productHasCustomizations(product)
+                                            ? "true"
+                                            : "false"
+                                    }"
+                                    ${isOutOfStock ? "disabled" : ""}
+                                    style="${
+                                        isOutOfStock
+                                            ? "opacity:0.5; cursor:not-allowed;"
+                                            : ""
+                                    }"
+                                    aria-label="Add to cart">
+
+                                    <i class="fa-solid fa-plus"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            } else {
+
+                card.innerHTML = `
+
+                    <div class="food-image">
+
+                        <img
+                            src="${escapeAttribute(image)}"
+                            alt="${escapeAttribute(product.name)}"
+                            loading="lazy"
+                        >
+
+                        <div class="food-image-overlay">
+                            <span>
+                                <i class="fa-solid fa-eye"></i>
+                                View Details
+                            </span>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="favorite heart-btn"
+                            aria-label="Add to favorites">
+
+                            <i class="fa-regular fa-heart"></i>
+
+                        </button>
+
+                        ${stockBadgeHTML}
+
+                    </div>
+
+
+                    <div class="food-content">
+
+                        <span class="food-category">
+                            ${escapeHTML(product.category || "")}
+                        </span>
+
+                        <h3>
+                            ${escapeHTML(product.name || "")}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(product.description || "")}
+                        </p>
+
+                        <div class="food-rating">
+
+                            <span class="stars">
+                                ${stars}
+                            </span>
+
+                            <span>
+                                ${rating.toFixed(1)}
+                            </span>
+
+                        </div>
+
+
+                        <div class="food-bottom">
+
+                            <strong>
+                                Rs. ${Number(
+                                    product.price || 0
+                                ).toLocaleString()}
+                            </strong>
+
+
+                            <button
+                                type="button"
+                                class="add-btn"
+                                data-id="${product.id || ""}"
+                                data-name="${escapeAttribute(
+                                    product.name || ""
+                                )}"
+                                data-price="${product.price || 0}"
+                                data-image="${escapeAttribute(
+                                    image
+                                )}"
+                                data-customize="${
+                                    productHasCustomizations(product)
+                                        ? "true"
+                                        : "false"
+                                }"
+                                ${isOutOfStock ? "disabled" : ""}
+                                style="${
+                                    isOutOfStock
+                                        ? "opacity:0.5; cursor:not-allowed;"
+                                        : ""
+                                }">
+
+                                <i class="fa-solid fa-plus"></i>
+                                ${
+                                    isOutOfStock
+                                        ? "Out of Stock"
+                                        : (
+                                            productHasCustomizations(product)
+                                                ? "Customize"
+                                                : "Add"
+                                        )
+                                }
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
 
             menuContainer.appendChild(card);
 
         });
+
+        if (isFullMenuLayout) {
+
+            const loadMoreBtn =
+                document.querySelector("#loadMoreBtn");
+
+            if (loadMoreBtn) {
+
+                loadMoreBtn.style.display =
+                    fullMenuVisibleCount >= productList.length
+                        ? "none"
+                        : "";
+
+            }
+
+        }
 
         attachProductEvents();
     }
@@ -399,12 +556,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
+                // If this card has a quantity stepper next
+                // to the Add button (the full-menu layout),
+                // add that many at once and reset it back
+                // to 1 afterwards.
+
+                const qtyEl =
+                    button
+                        .closest(".menu-card-actions")
+                        ?.querySelector(".qty-value");
+
+                const quantity =
+                    qtyEl
+                        ? Math.max(1, parseInt(qtyEl.textContent, 10) || 1)
+                        : 1;
+
                 addToCart(
                     id,
                     name,
                     price,
-                    image
+                    image,
+                    { quantity }
                 );
+
+                if (qtyEl) {
+                    qtyEl.textContent = "1";
+                }
+
+            });
+
+        });
+
+
+        /* QUANTITY STEPPER (full-menu layout) */
+
+        $$(".qty-minus").forEach(button => {
+
+            on(button, "click", event => {
+
+                event.preventDefault();
+
+                const valueEl =
+                    button
+                        .closest(".qty-stepper")
+                        ?.querySelector(".qty-value");
+
+                if (!valueEl) return;
+
+                const current =
+                    parseInt(valueEl.textContent, 10) || 1;
+
+                valueEl.textContent =
+                    Math.max(1, current - 1);
+
+            });
+
+        });
+
+
+        $$(".qty-plus").forEach(button => {
+
+            on(button, "click", event => {
+
+                event.preventDefault();
+
+                const valueEl =
+                    button
+                        .closest(".qty-stepper")
+                        ?.querySelector(".qty-value");
+
+                if (!valueEl) return;
+
+                const current =
+                    parseInt(valueEl.textContent, 10) || 1;
+
+                valueEl.textContent =
+                    Math.min(99, current + 1);
 
             });
 
@@ -995,6 +1222,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const customizationSummary =
             options.customizationSummary || "";
 
+        const quantityToAdd =
+            Math.max(1, Number(options.quantity) || 1);
+
         // Items with different customizations must stay as
         // separate cart lines, so we match on name + the
         // exact selections, not just the name.
@@ -1015,7 +1245,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (existing) {
 
-            existing.quantity++;
+            existing.quantity += quantityToAdd;
 
         } else {
 
@@ -1024,7 +1254,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: id,
                 name: name,
                 price: Number(price),
-                quantity: 1,
+                quantity: quantityToAdd,
                 image: image,
                 optionKey: optionKey,
                 selectedSize: selectedSize,
@@ -1123,6 +1353,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 .trim();
 
 
+            // On the full-menu (paginated) layout, only a
+            // handful of products exist in the DOM at once.
+            // Filtering by a specific category should show
+            // every matching item, not just the ones loaded
+            // so far — so expand pagination first, then
+            // re-render before applying the show/hide filter.
+
+            const fullMenuGrid =
+                document.querySelector(
+                    '.food-grid[data-layout="full-menu"]'
+                );
+
+            if (fullMenuGrid && products.length) {
+
+                fullMenuVisibleCount =
+                    category === "all"
+                        ? 6
+                        : products.length;
+
+                renderProducts(products);
+
+            }
+
+
             $$(".food-card").forEach(card => {
 
                 const cardCategory =
@@ -1149,6 +1403,21 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         });
+
+    });
+
+
+    /* =========================================
+       LOAD MORE (full-menu layout)
+    ========================================= */
+
+    const loadMoreBtn = $("#loadMoreBtn");
+
+    on(loadMoreBtn, "click", () => {
+
+        fullMenuVisibleCount += 6;
+
+        renderProducts(products);
 
     });
 

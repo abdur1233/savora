@@ -3521,3 +3521,96 @@ a {
         transition: none !important;
     }
 }
+
+
+/* =========================================
+   FULL MENU PAGE — quantity stepper + Load More
+========================================= */
+
+.menu-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.qty-stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f3f2f0;
+    border-radius: 8px;
+    padding: 8px 11px;
+}
+
+.qty-stepper button {
+    background: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #444;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.qty-stepper button:hover {
+    color: var(--orange);
+    transform: scale(1.15);
+}
+
+.qty-value {
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 12px;
+    text-align: center;
+}
+
+.load-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 38px;
+}
+
+.load-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #e5ddd4;
+    padding: 13px 28px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #333;
+    cursor: pointer;
+    transition:
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease;
+}
+
+.load-more-btn:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+}
+
+.load-more-btn i {
+    font-size: 10px;
+    transition: transform 0.3s ease;
+}
+
+.load-more-btn:hover i {
+    transform: translateY(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .qty-stepper button,
+    .load-more-btn,
+    .load-more-btn i {
+        transition: none !important;
+    }
+}
